@@ -76,6 +76,7 @@ profit_quarter = (
     .sort_values(by=["DT_INI_EXERC", "CD_CVM"])
     .reset_index(drop=True)
 )
+profit_quarter["VL_CONTA"] = profit_quarter["VL_CONTA"] * 1000
 profit_quarter["VL_CONTA_ROLLING_YEAR"] = profit_quarter.groupby("CD_CVM")[
     "VL_CONTA"
 ].transform(lambda s: s.rolling(4).sum())
