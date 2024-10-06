@@ -2,6 +2,7 @@ import pandas as pd
 
 df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
 df_prices = pd.read_csv("data/processed/stocks-prices.csv", parse_dates=["DATE"])
+df_dividends = pd.read_csv("data/processed/stocks-dividends.csv", parse_dates=["DATE"])
 df_fundaments = pd.read_csv(
     "data/processed/stocks-fundaments.csv",
     parse_dates=["DT_INI_EXERC", "DT_FIM_EXERC"],
@@ -70,6 +71,31 @@ df_history = df_history.drop(
     ["PROFIT", "PROFIT_ROLLING_YEAR", "NUM_TOTAL", "LPA"], axis=1
 )
 
+### Calculating the Dividend Yield
+df_history = pd.merge(
+    df_history,
+    df_dividends.groupby(["TICKER", "DATE"])["VALUE"].sum(),
+    how="left",
+    on=["TICKER", "DATE"],
+)
+df_history["VALUE"] = df_history["VALUE"].fillna(0)
+
+df_dividends_rolling = (
+    df_history.groupby("TICKER").rolling(window="365D", on="DATE")["VALUE"].sum()
+)
+df_dividends_rolling = df_dividends_rolling.reset_index()
+df_dividends_rolling = df_dividends_rolling.rename(columns={"VALUE": "Dividends_1y"})
+
+df_history = pd.merge(
+    df_history, df_dividends_rolling, how="left", on=["TICKER", "DATE"]
+)
+
+df_history["DIVIDEND_YIELD"] = df_history["Dividends_1y"] / df_history["PRICE"]
+
+df_history = df_history.drop(["VALUE", "Dividends_1y"], axis=1)
+
+
+### Exporting the resulting dataset
 print(df_history)
 
 df_history.to_csv("data/processed/stocks-history.csv", index=False)
