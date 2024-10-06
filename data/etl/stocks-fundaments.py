@@ -2,6 +2,7 @@ import pandas as pd
 import datetime
 import os.path
 
+### Only 2022 forward became mandatory to share info with CVM
 years_load = [2022, 2023, 2024]
 files_load = ["dfp_cia_aberta_DRE_con_", "itr_cia_aberta_DRE_con_"]
 
