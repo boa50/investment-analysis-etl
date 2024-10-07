@@ -100,7 +100,7 @@ column_name = "NET_WORTH"
 
 df_history = include_fundament(df_history, df_fundaments, fundament_type, column_name)
 
-df_history["VP"] = (df_history["NET_WORTH"] * 1000) / df_history["NUM_TOTAL"]
+df_history["VP"] = df_history["NET_WORTH"] / df_history["NUM_TOTAL"]
 df_history["PVP"] = df_history["PRICE"] / df_history["VP"]
 
 df_history = df_history.drop(["NET_WORTH", "NET_WORTH_ROLLING_YEAR", "VP"], axis=1)

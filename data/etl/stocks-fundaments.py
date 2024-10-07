@@ -125,6 +125,7 @@ df_pl["DT_INI_EXERC"] = "1900-01-01"
 df_pl = prepare_dataframe(df_pl, cd_cvm_load)
 
 df_pl["VL_CONTA_ROLLING_YEAR"] = -1
+df_pl["VL_CONTA"] = df_pl["VL_CONTA"] * 1000
 
 df_pl = df_pl.sort_values(by=["DT_FIM_EXERC", "CD_CVM"])
 
@@ -134,8 +135,29 @@ print(df_pl.head())
 print()
 
 
+### ROE
+df_profit = profit_quarter.drop(["DS_CONTA", "VL_CONTA"], axis=1)
+df_net_worth = df_pl.drop(
+    ["DT_INI_EXERC", "DS_CONTA", "EXERC_YEAR", "VL_CONTA_ROLLING_YEAR"], axis=1
+)
+
+df_roe = df_profit.merge(df_net_worth, how="left", on=["CD_CVM", "DT_FIM_EXERC"])
+
+df_roe["ROE"] = df_roe["VL_CONTA_ROLLING_YEAR"] / df_roe["VL_CONTA"]
+df_roe["VL_CONTA_ROLLING_YEAR"] = -1
+df_roe["VL_CONTA"] = df_roe["ROE"]
+df_roe["DS_CONTA"] = "ROE"
+
+df_roe = df_roe.drop("ROE", axis=1)
+
+print()
+print("ROE")
+print(df_roe.head())
+print()
+
+
 ### Consolidate final file
-df_fundaments = pd.concat([profit_quarter, df_pl])
+df_fundaments = pd.concat([profit_quarter, df_pl, df_roe])
 
 print()
 print("DF FUNDAMENTS")
