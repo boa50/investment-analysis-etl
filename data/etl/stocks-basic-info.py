@@ -1,11 +1,15 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import time
+import random
 
 
 def get_stock_info(cd_cvm):
     print("Getting stock info from bovespa for CD_CVM = " + str(cd_cvm))
-    
+
+    time.sleep(random.randint(1, 7))
+
     url = (
         "https://bvmf.bmfbovespa.com.br/pt-br/mercados/acoes/empresas/ExecutaAcaoConsultaInfoEmp.asp?CodCVM="
         + str(cd_cvm)
@@ -33,13 +37,19 @@ def get_stock_info(cd_cvm):
 
 df = pd.read_csv("data/raw/cad_cia_aberta.csv", encoding="ISO-8859-1", sep=";")
 
-df = df[(df["SIT"] == "ATIVO") & (df["SETOR_ATIV"] == "Bancos")]
+df = df[(df["SIT"] == "ATIVO")]
 
 columns = ["CD_CVM", "DENOM_SOCIAL", "CNPJ_CIA", "SETOR_ATIV", "CONTROLE_ACIONARIO"]
 
-cd_cvm_test = [1023, 906]
+cd_cvm_test = [
+    1023,  # Banco do Brasil
+    906,  # Bradesco
+    20257,  # Taesa
+    18376,  # Transmissões Paulista
+]
 
 df = df[df["CD_CVM"].isin(cd_cvm_test)][columns]
+df = df.drop_duplicates()
 
 ticker_df = pd.DataFrame(
     columns=["CD_CVM", "TICKERS", "NUM_ORDINARIAS", "NUM_PREFERENCIAIS", "NUM_TOTAL"]

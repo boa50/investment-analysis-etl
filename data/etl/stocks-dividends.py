@@ -1,6 +1,8 @@
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
+import time
+import random
 
 
 def get_main_ticker(tickers):
@@ -18,6 +20,7 @@ def get_main_ticker(tickers):
 
 
 def get_dividends(ticker):
+    time.sleep(random.randint(1, 7))
     url = "https://www.dadosdemercado.com.br/acoes/" + ticker + "/dividendos"
     page = requests.get(url)
 
