@@ -10,8 +10,8 @@ df_fundaments = pd.read_csv(
 
 
 ### Function to include fundament data into the history dataframe
-def include_fundament(df_history, df_fundaments, fundament_type, column_name):
-    df_fundaments_filtered = df_fundaments[df_fundaments["DS_CONTA"] == fundament_type]
+def include_fundament(df_history, df_fundaments, kpi_type, column_name):
+    df_fundaments_filtered = df_fundaments[df_fundaments["KPI"] == kpi_type]
     df_history = df_history.merge(
         df_fundaments_filtered,
         how="left",
@@ -19,7 +19,7 @@ def include_fundament(df_history, df_fundaments, fundament_type, column_name):
         right_on=["CD_CVM", "DT_FIM_EXERC"],
     )
     df_history = df_history.drop(
-        ["DS_CONTA", "DT_INI_EXERC", "DT_FIM_EXERC", "EXERC_YEAR"], axis=1
+        ["KPI", "DT_INI_EXERC", "DT_FIM_EXERC", "EXERC_YEAR"], axis=1
     )
     fundament_columns = [column_name, column_name + "_ROLLING_YEAR"]
 
@@ -56,10 +56,10 @@ for ticker in df_prices["TICKER"].unique():
 
 
 ### Calculating the P/L
-fundament_type = "Lucro ou Prejuízo"
+kpi_type = "PROFIT"
 column_name = "PROFIT"
 
-df_history = include_fundament(df_history, df_fundaments, fundament_type, column_name)
+df_history = include_fundament(df_history, df_fundaments, kpi_type, column_name)
 
 df_num_stocks = df_basic_info[["CD_CVM", "NUM_TOTAL"]]
 df_history = df_history.merge(df_num_stocks, how="left", on="CD_CVM")
@@ -95,10 +95,10 @@ df_history = df_history.drop(["VALUE", "Dividends_1y"], axis=1)
 
 
 ### Calculating the PVP
-fundament_type = "Patrimônio Líquido"
+kpi_type = "EQUITY"
 column_name = "NET_WORTH"
 
-df_history = include_fundament(df_history, df_fundaments, fundament_type, column_name)
+df_history = include_fundament(df_history, df_fundaments, kpi_type, column_name)
 
 df_history["VP"] = df_history["NET_WORTH"] / df_history["NUM_TOTAL"]
 df_history["PVP"] = df_history["PRICE"] / df_history["VP"]
