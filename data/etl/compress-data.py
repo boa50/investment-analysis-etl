@@ -19,3 +19,7 @@ def zip_data():
 def unzip_data():
     with zipfile.ZipFile(join(data_path, "data.zip"), "r") as zip_ref:
         zip_ref.extractall("")
+
+
+# zip_data()
+# unzip_data()

@@ -87,3 +87,29 @@ cd_cvm_load = df_basic_info["CD_CVM"].values
 # df = df[df["DS_CONTA"].isin(kpis)]
 # print(df)
 # df.to_csv("data/raw/_reference-table-equity.csv", index=False)
+
+
+### EBIT
+files_load = [
+    "itr_cia_aberta_DRE_ind_",
+    "dfp_cia_aberta_DRE_ind_",
+]
+
+df = load_files(years_load, files_load)
+df = clear_table(df, cd_cvm_load)
+
+print(
+    df[df["DS_CONTA"].str.contains("resultado antes")]
+    .groupby(["CD_CONTA", "DS_CONTA"])
+    .count()
+    .reset_index()
+)
+
+kpis = [
+    "resultado antes do resultado financeiro e dos tributos",
+    "resultado antes dos tributos sobre o lucro",
+    "resultado antes tributação/participações",
+]
+df = df[df["DS_CONTA"].isin(kpis)]
+print(df)
+df.to_csv("data/raw/_reference-table-ebit.csv", index=False)
