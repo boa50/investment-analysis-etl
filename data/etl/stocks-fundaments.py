@@ -55,6 +55,21 @@ def load_ebit():
     return get_kpi_info("EBIT")
 
 
+###### EBITDA
+def load_ebitda():
+    df_kpi = get_kpi_fields(df_dre, df_reference_table, "EBITDA-NEG")
+    df_kpi = transform_anual_quarter(df_kpi)
+
+    print()
+    print("EBITDA")
+    print(df_kpi.tail())
+    print()
+
+    return df_kpi
+
+
+load_ebitda()
+
 ### KPIs from BPP files
 files_load = ["dfp_cia_aberta_BPP_ind_", "itr_cia_aberta_BPP_ind_"]
 
@@ -108,16 +123,16 @@ def load_roe(df_profit, df_equity):
 
 
 ### Consolidate final file
-df_profit = load_profit()
-df_equity = load_equity()
+# df_profit = load_profit()
+# df_equity = load_equity()
 
-df_fundaments = pd.concat(
-    [df_profit, df_equity, load_roe(df_profit, df_equity), load_ebit()]
-)
+# df_fundaments = pd.concat(
+#     [df_profit, df_equity, load_roe(df_profit, df_equity), load_ebit()]
+# )
 
-print()
-print("DF FUNDAMENTS")
-print(df_fundaments.head(2))
-print()
+# print()
+# print("DF FUNDAMENTS")
+# print(df_fundaments.head(2))
+# print()
 
-df_fundaments.to_csv("data/processed/stocks-fundaments.csv", index=False)
+# df_fundaments.to_csv("data/processed/stocks-fundaments.csv", index=False)
