@@ -69,20 +69,23 @@ def get_kpi_by_cvm_code(df, cd_cvm, kpi_name, file_names_loaded, df_reference_ta
 
     general_cd_conta = pd.DataFrame()
     for fname in list(set(file_names_loaded).difference(distinct_files_names)):
-        general_cd_conta = pd.concat(
-            [
-                general_cd_conta,
-                pd.DataFrame(
-                    {
-                        "CD_CVM": general_cd_conta_value["CD_CVM"].iloc[0],
-                        "FILE_NAME": fname,
-                        "CD_CONTA": str(general_cd_conta_value["CD_CONTA"].iloc[0]),
-                        "MATCHED_1": True,
-                    },
-                    index=[general_cd_conta.shape[0]],
-                ),
-            ]
-        )
+        for _, row in general_cd_conta_value.iterrows():
+            general_cd_conta = pd.concat(
+                [
+                    general_cd_conta,
+                    pd.DataFrame(
+                        {
+                            # "CD_CVM": general_cd_conta_value["CD_CVM"].iloc[0],
+                            "CD_CVM": row["CD_CVM"],
+                            "FILE_NAME": fname,
+                            # "CD_CONTA": str(general_cd_conta_value["CD_CONTA"].iloc[0]),
+                            "CD_CONTA": str(row["CD_CONTA"]),
+                            "MATCHED_1": True,
+                        },
+                        index=[general_cd_conta.shape[0]],
+                    ),
+                ]
+            )
 
     df_kpi = df.merge(
         general_cd_conta, how="left", on=["CD_CVM", "FILE_NAME", "CD_CONTA"]
@@ -118,7 +121,6 @@ def get_kpi_fields(df, df_reference_table, kpi_name):
     df_kpi = pd.DataFrame()
 
     for cd_cvm in df_reference_table_tmp["CD_CVM"].unique():
-
         df_kpi = pd.concat(
             [
                 df_kpi,
