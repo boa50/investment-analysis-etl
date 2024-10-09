@@ -52,7 +52,6 @@ cd_cvm_load = df_basic_info["CD_CVM"].values
 # ]
 
 # df = load_files(years_load, files_load)
-
 # df = clear_table(df, cd_cvm_load)
 
 # print(
@@ -63,4 +62,28 @@ cd_cvm_load = df_basic_info["CD_CVM"].values
 # )
 
 # kpis = ["lucro ou prejuízo líquido do período", "lucro/prejuízo do período"]
-# print(df[df["DS_CONTA"].isin(kpis)])
+# df = df[df["DS_CONTA"].isin(kpis)]
+# print(df)
+# df.to_csv("data/raw/_reference-table-profit.csv", index=False)
+
+
+### EQUITY (VALOR PATRIMONIAL)
+# files_load = [
+#     "itr_cia_aberta_BPP_ind_",
+#     "dfp_cia_aberta_BPP_ind_",
+# ]
+
+# df = load_files(years_load, files_load)
+# df = clear_table(df, cd_cvm_load)
+
+# print(
+#     df[df["DS_CONTA"].str.contains("patrimônio")]
+#     .groupby(["CD_CONTA", "DS_CONTA"])
+#     .count()
+#     .reset_index()
+# )
+
+# kpis = ["patrimônio líquido"]
+# df = df[df["DS_CONTA"].isin(kpis)]
+# print(df)
+# df.to_csv("data/raw/_reference-table-equity.csv", index=False)

@@ -162,7 +162,6 @@ df = load_files(years_load, files_load)
 df = prepare_dataframe(df, cd_cvm_load)
 
 profit_raw = get_kpi_fields(df, df_reference_table, "PROFIT")
-# profit_raw = df[df["DS_CONTA"] == "Lucro ou Prejuízo Líquido Consolidado do Período"]
 
 td_quarter = datetime.timedelta(days=93)
 td_year = datetime.timedelta(days=360)
@@ -211,50 +210,49 @@ print(profit_quarter.head())
 print()
 
 
-### PATRIMONIAL VALUE
-# files_load = ["dfp_cia_aberta_BPP_ind_", "itr_cia_aberta_BPP_ind_"]
+### EQUITY (VALOR PATRIMONIAL)
+files_load = ["dfp_cia_aberta_BPP_ind_", "itr_cia_aberta_BPP_ind_"]
 
-# df_pl = load_files(years_load, files_load)
+df_pl = load_files(years_load, files_load)
+df_pl["DT_INI_EXERC"] = "1900-01-01"
+df_pl = prepare_dataframe(df_pl, cd_cvm_load)
 
-# df_pl = df_pl[df_pl["DS_CONTA"] == "Patrimônio Líquido"]
-# df_pl["DT_INI_EXERC"] = "1900-01-01"
-# df_pl = prepare_dataframe(df_pl, cd_cvm_load)
+df_pl = get_kpi_fields(df_pl, df_reference_table, "EQUITY")
 
-# df_pl["VL_CONTA_ROLLING_YEAR"] = -1
-# df_pl["VL_CONTA"] = df_pl["VL_CONTA"] * 1000
+df_pl["VL_CONTA_ROLLING_YEAR"] = -1
+df_pl["VL_CONTA"] = df_pl["VL_CONTA"] * 1000
 
-# df_pl = df_pl.sort_values(by=["DT_FIM_EXERC", "CD_CVM"])
+df_pl = df_pl.sort_values(by=["DT_FIM_EXERC", "CD_CVM"])
 
-# print()
-# print("PL")
-# print(df_pl.head())
-# print()
+print()
+print("PL")
+print(df_pl.head())
+print()
 
 
 ### ROE
-# df_profit = profit_quarter.drop(["DS_CONTA", "VL_CONTA"], axis=1)
-# df_net_worth = df_pl.drop(
-#     ["DT_INI_EXERC", "DS_CONTA", "EXERC_YEAR", "VL_CONTA_ROLLING_YEAR"], axis=1
-# )
+df_profit = profit_quarter.drop(["KPI", "VL_CONTA"], axis=1)
+df_net_worth = df_pl.drop(
+    ["DT_INI_EXERC", "KPI", "EXERC_YEAR", "VL_CONTA_ROLLING_YEAR"], axis=1
+)
 
-# df_roe = df_profit.merge(df_net_worth, how="left", on=["CD_CVM", "DT_FIM_EXERC"])
+df_roe = df_profit.merge(df_net_worth, how="left", on=["CD_CVM", "DT_FIM_EXERC"])
 
-# df_roe["ROE"] = df_roe["VL_CONTA_ROLLING_YEAR"] / df_roe["VL_CONTA"]
-# df_roe["VL_CONTA_ROLLING_YEAR"] = -1
-# df_roe["VL_CONTA"] = df_roe["ROE"]
-# df_roe["DS_CONTA"] = "ROE"
+df_roe["ROE"] = df_roe["VL_CONTA_ROLLING_YEAR"] / df_roe["VL_CONTA"]
+df_roe["VL_CONTA_ROLLING_YEAR"] = -1
+df_roe["VL_CONTA"] = df_roe["ROE"]
+df_roe["KPI"] = "ROE"
 
-# df_roe = df_roe.drop("ROE", axis=1)
+df_roe = df_roe.drop("ROE", axis=1)
 
-# print()
-# print("ROE")
-# print(df_roe.head())
-# print()
+print()
+print("ROE")
+print(df_roe.head())
+print()
 
 
 ### Consolidate final file
-# df_fundaments = pd.concat([profit_quarter, df_pl, df_roe])
-df_fundaments = pd.concat([profit_quarter])
+df_fundaments = pd.concat([profit_quarter, df_pl, df_roe])
 
 print()
 print("DF FUNDAMENTS")
