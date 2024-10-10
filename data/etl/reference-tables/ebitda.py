@@ -1,5 +1,6 @@
 import pandas as pd
-from utils import load_files, clear_table, get_cd_cvm_load, get_years_load
+from data.etl.utils import load_files
+from utils import clear_table, get_cd_cvm_load, get_years_load
 
 cd_cvm_load = get_cd_cvm_load()
 years_load = get_years_load()
@@ -12,6 +13,7 @@ files_load = [
 df = load_files(years_load, files_load)
 
 # Banks don't have EBITDA
+# https://investalk.bb.com.br/noticias/quero-aprender/entenda-o-balanco-dos-bancos-e-porque-e-diferente-de-outras-empresas
 cd_cvm_load_excluding_banks = list(set(cd_cvm_load).difference([906, 1023]))
 df = clear_table(df, cd_cvm_load_excluding_banks)
 
@@ -55,4 +57,4 @@ df_case02 = df_case02[df_case02["DS_CONTA"].isin(kpis)]
 
 df = pd.concat([df_general, df_case01, df_case02])
 print(df)
-df.to_csv("data/raw/_reference-table-ebitda-neg.csv", index=False)
+# df.to_csv("data/raw/_reference-table-ebitda-neg.csv", index=False)

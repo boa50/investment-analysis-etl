@@ -2,29 +2,6 @@ import os
 import pandas as pd
 
 
-def load_files(years_load, files_load):
-    df = pd.DataFrame()
-
-    for year in years_load:
-        for file in files_load:
-            fname = "data/raw/" + file + str(year) + ".csv"
-
-            if os.path.isfile(fname):
-                df_tmp = pd.read_csv(
-                    fname,
-                    encoding="ISO-8859-1",
-                    sep=";",
-                )
-
-                df_tmp.loc[:, "FILE_NAME"] = file + str(year)
-
-                df = pd.concat([df, df_tmp])
-            else:
-                print(fname + " not found! Skipping")
-
-    return df
-
-
 def clear_table(df, cd_cvm_load):
     df_fields = df.copy()
     df_fields = df_fields[df_fields["CD_CVM"].isin(cd_cvm_load)]
