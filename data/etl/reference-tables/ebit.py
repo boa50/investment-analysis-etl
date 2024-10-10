@@ -1,4 +1,5 @@
-from utils import load_files, clear_table, get_cd_cvm_load, get_years_load
+from data.etl.utils import load_files
+from utils import clear_table, get_cd_cvm_load, get_years_load
 
 cd_cvm_load = get_cd_cvm_load()
 years_load = get_years_load()
