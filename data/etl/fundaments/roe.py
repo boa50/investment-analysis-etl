@@ -1,4 +1,4 @@
-def load_roe(df_profit, df_equity):
+def load_roe(df_profit, df_equity, verbose=False):
     df_profit = df_profit.drop(["KPI", "VL_CONTA"], axis=1)
     df_net_worth = df_equity.drop(
         ["DT_INI_EXERC", "KPI", "EXERC_YEAR", "VL_CONTA_ROLLING_YEAR"], axis=1
@@ -13,9 +13,10 @@ def load_roe(df_profit, df_equity):
 
     df_roe = df_roe.drop("ROE", axis=1)
 
-    print()
-    print("ROE")
-    print(df_roe.head(2))
-    print()
+    if verbose:
+        print()
+        print("ROE")
+        print(df_roe.head(2))
+        print()
 
     return df_roe

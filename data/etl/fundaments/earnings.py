@@ -1,17 +1,14 @@
-from data.etl.utils import (
-    get_kpi_fields,
-    transform_anual_quarter,
-)
+from utils import get_dre_kpi_info
 
 
-def load_ebitda(df_ebit, df_dre, df_reference_table):
-    df_kpi = get_kpi_fields(df_dre, df_reference_table, "EBITDA-NEG")
-    df_kpi = (
-        df_kpi.groupby(["CD_CVM", "DT_INI_EXERC", "DT_FIM_EXERC"])
-        .agg({"KPI": "max", "VL_CONTA": "sum", "EXERC_YEAR": "max"})
-        .reset_index()
+def load_ebit(df_dre, df_reference_table, verbose=False):
+    return get_dre_kpi_info("EBIT", df_dre, df_reference_table, verbose=verbose)
+
+
+def load_ebitda(df_ebit, df_dre, df_reference_table, verbose=False):
+    df_kpi = get_dre_kpi_info(
+        "EBIT", df_dre, df_reference_table, grouping=True, verbose=verbose
     )
-    df_kpi = transform_anual_quarter(df_kpi)
 
     df_kpi = df_kpi.drop(["KPI", "DT_INI_EXERC", "EXERC_YEAR"], axis=1)
 
@@ -39,9 +36,10 @@ def load_ebitda(df_ebit, df_dre, df_reference_table):
         axis=1,
     )
 
-    print()
-    print("EBITDA")
-    print(df_kpi.tail(2))
-    print()
+    if verbose:
+        print()
+        print("EBITDA")
+        print(df_kpi.tail(2))
+        print()
 
     return df_kpi

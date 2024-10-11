@@ -3,7 +3,7 @@ from data.etl.utils import (
 )
 
 
-def load_equity(df_bpp, df_reference_table):
+def load_equity(df_bpp, df_reference_table, verbose=False):
     df_pl = get_kpi_fields(df_bpp, df_reference_table, "EQUITY")
 
     df_pl["VL_CONTA_ROLLING_YEAR"] = -1
@@ -11,9 +11,10 @@ def load_equity(df_bpp, df_reference_table):
 
     df_pl = df_pl.sort_values(by=["DT_FIM_EXERC", "CD_CVM"])
 
-    print()
-    print("PL")
-    print(df_pl.head(2))
-    print()
+    if verbose:
+        print()
+        print("PL")
+        print(df_pl.head(2))
+        print()
 
     return df_pl
