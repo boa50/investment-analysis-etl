@@ -116,7 +116,9 @@ def get_kpi_fields(df, df_reference_table, kpi_name):
     file_names_loaded = df["FILE_NAME"].unique()
 
     df_reference_table_tmp = df_reference_table[df_reference_table["KPI"] == kpi_name]
-    df_reference_table_tmp["CD_CONTA"] = df_reference_table_tmp["CD_CONTA"].astype(str)
+    df_reference_table_tmp.loc[:, "CD_CONTA"] = df_reference_table_tmp[
+        "CD_CONTA"
+    ].astype(str)
 
     df_kpi = pd.DataFrame()
 

@@ -7,7 +7,7 @@ def load_ebit(df_dre, df_reference_table, verbose=False):
 
 def load_ebitda(df_ebit, df_dre, df_reference_table, verbose=False):
     df_kpi = get_dre_kpi_info(
-        "EBIT", df_dre, df_reference_table, grouping=True, verbose=verbose
+        "EBITDA-NEG", df_dre, df_reference_table, grouping=True, verbose=verbose
     )
 
     df_kpi = df_kpi.drop(["KPI", "DT_INI_EXERC", "EXERC_YEAR"], axis=1)

@@ -71,8 +71,8 @@ df_fundaments = pd.concat(
 
 print()
 print("DF FUNDAMENTS")
-print(df_fundaments.head(2))
-print(df_fundaments.tail(2))
+print(df_fundaments.head())
+print(df_fundaments.tail())
 print()
 
 df_fundaments.to_csv("data/processed/stocks-fundaments.csv", index=False)
