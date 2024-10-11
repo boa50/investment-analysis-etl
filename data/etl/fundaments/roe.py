@@ -16,7 +16,7 @@ def load_roe(df_profit, df_equity, verbose=False):
     if verbose:
         print()
         print("ROE")
-        print(df_roe.head(2))
+        print(df_roe.head())
         print()
 
     return df_roe
