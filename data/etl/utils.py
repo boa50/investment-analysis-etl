@@ -3,12 +3,28 @@ import os
 import datetime
 
 
-def load_files(years_load, files_load):
+def load_files(years_load, files_types_load):
+    files_load = []
+
+    files_prefixes = ["itr", "dfp"]
+    files_sufixes = ["ind", "con"]
+    for type in files_types_load:
+        for prefix in files_prefixes:
+            for sufix in files_sufixes:
+                files_load.append(
+                    {
+                        "FILE_PREFIX": prefix,
+                        "FILE_SUFIX": sufix,
+                        "FILE_TYPE": type,
+                        "FILE_NAME": prefix + "_cia_aberta_" + type + "_" + sufix + "_",
+                    }
+                )
+
     df = pd.DataFrame()
 
     for year in years_load:
         for file in files_load:
-            fname = "data/raw/" + file + str(year) + ".csv"
+            fname = "data/raw/" + file["FILE_NAME"] + str(year) + ".csv"
 
             if os.path.isfile(fname):
                 df_tmp = pd.read_csv(
@@ -17,7 +33,11 @@ def load_files(years_load, files_load):
                     sep=";",
                 )
 
-                df_tmp.loc[:, "FILE_NAME"] = file + str(year)
+                df_tmp.loc[:, "FILE_PREFIX"] = file["FILE_PREFIX"]
+                df_tmp.loc[:, "FILE_TYPE"] = file["FILE_TYPE"]
+                df_tmp.loc[:, "FILE_SUFIX"] = file["FILE_SUFIX"]
+                df_tmp.loc[:, "FILE_YEAR"] = str(year)
+                # df_tmp.loc[:, "FILE_NAME"] = file["FILE_NAME"] + str(year)
 
                 df = pd.concat([df, df_tmp])
             else:
