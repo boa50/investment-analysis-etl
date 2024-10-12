@@ -16,7 +16,11 @@ def clear_table(df, cd_cvm_load):
 
 
 def get_years_load():
-    return [2019, 2020, 2021, 2022, 2023, 2024]
+    year_initial = 2019
+    year_final = 2024
+    years_load = list(range(year_initial, year_final + 1))
+
+    return years_load
 
 
 def get_cd_cvm_load():

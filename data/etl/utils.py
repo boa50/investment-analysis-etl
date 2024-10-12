@@ -47,8 +47,17 @@ def load_files(years_load, files_types_load):
 
 
 def prepare_dataframe(df, cd_cvm_load):
-    df = df[df["CD_CVM"].isin(cd_cvm_load)]
     df = df[df["ORDEM_EXERC"] == "ÚLTIMO"]
+    df_stocks_files = pd.read_csv("data/processed/stocks-files.csv")
+    df_stocks_files = df_stocks_files[df_stocks_files["CD_CVM"].isin(cd_cvm_load)]
+    df_stocks_files["FILE_YEAR"] = df_stocks_files["FILE_YEAR"].astype(str)
+    # df = df[df["CD_CVM"].isin(cd_cvm_load)]
+    df = df.merge(
+        df_stocks_files,
+        how="inner",
+        on=["CD_CVM", "FILE_PREFIX", "FILE_YEAR", "FILE_SUFIX"],
+    )
+
     df = df[
         [
             "CD_CVM",
@@ -57,12 +66,13 @@ def prepare_dataframe(df, cd_cvm_load):
             "CD_CONTA",
             "DS_CONTA",
             "VL_CONTA",
-            "FILE_NAME",
+            "FILE_YEAR",
         ]
     ]
     df["DT_FIM_EXERC"] = pd.to_datetime(df["DT_FIM_EXERC"])
     df["DT_INI_EXERC"] = pd.to_datetime(df["DT_INI_EXERC"])
-    df["EXERC_YEAR"] = df["DT_FIM_EXERC"].dt.year
+    # df["EXERC_YEAR"] = df["DT_FIM_EXERC"].dt.year
+    df = df.rename(columns={"FILE_YEAR": "EXERC_YEAR"})
 
     return df
 
