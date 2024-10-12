@@ -27,21 +27,32 @@ def load_files(years_load, files_types_load):
             fname = "data/raw/" + file["FILE_NAME"] + str(year) + ".csv"
 
             if os.path.isfile(fname):
+                cols_load = [
+                    "CD_CVM",
+                    "ORDEM_EXERC",
+                    "DT_FIM_EXERC",
+                    "CD_CONTA",
+                    "DS_CONTA",
+                    "VL_CONTA",
+                ]
+
+                if file["FILE_TYPE"] == "DRE":
+                    cols_load.append("DT_INI_EXERC")
+
                 df_tmp = pd.read_csv(
-                    fname,
-                    encoding="ISO-8859-1",
-                    sep=";",
+                    fname, encoding="ISO-8859-1", sep=";", usecols=cols_load
                 )
 
-                df_tmp.loc[:, "FILE_PREFIX"] = file["FILE_PREFIX"]
+                df_tmp.loc[:, "FILE_CATEGORY"] = "{}_{}_{}".format(
+                    file["FILE_PREFIX"], file["FILE_SUFIX"], year
+                )
                 df_tmp.loc[:, "FILE_TYPE"] = file["FILE_TYPE"]
-                df_tmp.loc[:, "FILE_SUFIX"] = file["FILE_SUFIX"]
-                df_tmp.loc[:, "FILE_YEAR"] = str(year)
-                # df_tmp.loc[:, "FILE_NAME"] = file["FILE_NAME"] + str(year)
 
                 df = pd.concat([df, df_tmp])
             else:
                 print(fname + " not found! Skipping")
+
+    df["FILE_CATEGORY"] = df["FILE_CATEGORY"].astype("category")
 
     return df
 
@@ -51,7 +62,7 @@ def prepare_dataframe(df, cd_cvm_load):
     df_stocks_files = pd.read_csv("data/processed/stocks-files.csv")
     df_stocks_files = df_stocks_files[df_stocks_files["CD_CVM"].isin(cd_cvm_load)]
     df_stocks_files["FILE_YEAR"] = df_stocks_files["FILE_YEAR"].astype(str)
-    # df = df[df["CD_CVM"].isin(cd_cvm_load)]
+
     df = df.merge(
         df_stocks_files,
         how="inner",
