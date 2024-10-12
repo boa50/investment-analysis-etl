@@ -46,6 +46,9 @@ def load_files(years_load, files_types_load):
                 df_tmp.loc[:, "FILE_CATEGORY"] = "{}_{}_{}".format(
                     file["FILE_PREFIX"], file["FILE_SUFIX"], year
                 )
+                df_tmp.loc[:, "FILE_CATEGORY_SHORT"] = "{}_{}".format(
+                    file["FILE_PREFIX"], year
+                )
                 df_tmp.loc[:, "FILE_TYPE"] = file["FILE_TYPE"]
 
                 df = pd.concat([df, df_tmp])
@@ -53,6 +56,7 @@ def load_files(years_load, files_types_load):
                 print(fname + " not found! Skipping")
 
     df["FILE_CATEGORY"] = df["FILE_CATEGORY"].astype("category")
+    df["FILE_CATEGORY_SHORT"] = df["FILE_CATEGORY_SHORT"].astype("category")
 
     return df
 
@@ -61,13 +65,8 @@ def prepare_dataframe(df, cd_cvm_load):
     df = df[df["ORDEM_EXERC"] == "ÚLTIMO"]
     df_stocks_files = pd.read_csv("data/processed/stocks-files.csv")
     df_stocks_files = df_stocks_files[df_stocks_files["CD_CVM"].isin(cd_cvm_load)]
-    df_stocks_files["FILE_YEAR"] = df_stocks_files["FILE_YEAR"].astype(str)
 
-    df = df.merge(
-        df_stocks_files,
-        how="inner",
-        on=["CD_CVM", "FILE_PREFIX", "FILE_YEAR", "FILE_SUFIX"],
-    )
+    df = df.merge(df_stocks_files, how="inner", on=["CD_CVM", "FILE_CATEGORY"])
 
     df = df[
         [
@@ -77,49 +76,53 @@ def prepare_dataframe(df, cd_cvm_load):
             "CD_CONTA",
             "DS_CONTA",
             "VL_CONTA",
-            "FILE_YEAR",
+            "FILE_CATEGORY_SHORT",
         ]
     ]
+
     df["DT_FIM_EXERC"] = pd.to_datetime(df["DT_FIM_EXERC"])
     df["DT_INI_EXERC"] = pd.to_datetime(df["DT_INI_EXERC"])
-    # df["EXERC_YEAR"] = df["DT_FIM_EXERC"].dt.year
-    df = df.rename(columns={"FILE_YEAR": "EXERC_YEAR"})
+    df["EXERC_YEAR"] = df["DT_FIM_EXERC"].dt.year
 
     return df
 
 
-def get_kpi_by_cvm_code(df, cd_cvm, kpi_name, file_names_loaded, df_reference_table):
+def get_kpi_by_cvm_code(
+    df, cd_cvm, kpi_name, file_categories_loaded, df_reference_table
+):
     df_reference_table_tmp = df_reference_table[df_reference_table["CD_CVM"] == cd_cvm]
 
     general_cd_conta_value = df_reference_table_tmp[
-        df_reference_table_tmp["FILE_NAME"] == "-1"
+        df_reference_table_tmp["FILE_CATEGORY_SHORT"] == "-1"
     ][["CD_CVM", "CD_CONTA"]]
 
-    distinct_files = df_reference_table_tmp[df_reference_table_tmp["FILE_NAME"] != "-1"]
-    distinct_files_names = distinct_files["FILE_NAME"].values
+    distinct_files = df_reference_table_tmp[
+        df_reference_table_tmp["FILE_CATEGORY_SHORT"] != "-1"
+    ]
+    distinct_files_categories = distinct_files["FILE_CATEGORY_SHORT"].values
 
     distinct_files_cd_conta = distinct_files[distinct_files["CD_CONTA"] != "-1.0"][
-        ["CD_CVM", "FILE_NAME", "CD_CONTA"]
+        ["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"]
     ]
     distinct_files_cd_conta["MATCHED_2"] = True
 
     distinct_files_ds_conta = distinct_files[distinct_files["DS_CONTA"] != "-1"][
-        ["CD_CVM", "FILE_NAME", "DS_CONTA"]
+        ["CD_CVM", "FILE_CATEGORY_SHORT", "DS_CONTA"]
     ]
     distinct_files_ds_conta["MATCHED_3"] = True
 
     general_cd_conta = pd.DataFrame()
-    for fname in list(set(file_names_loaded).difference(distinct_files_names)):
+    for fcategory in list(
+        set(file_categories_loaded).difference(distinct_files_categories)
+    ):
         for _, row in general_cd_conta_value.iterrows():
             general_cd_conta = pd.concat(
                 [
                     general_cd_conta,
                     pd.DataFrame(
                         {
-                            # "CD_CVM": general_cd_conta_value["CD_CVM"].iloc[0],
                             "CD_CVM": row["CD_CVM"],
-                            "FILE_NAME": fname,
-                            # "CD_CONTA": str(general_cd_conta_value["CD_CONTA"].iloc[0]),
+                            "FILE_CATEGORY_SHORT": fcategory,
                             "CD_CONTA": str(row["CD_CONTA"]),
                             "MATCHED_1": True,
                         },
@@ -129,13 +132,17 @@ def get_kpi_by_cvm_code(df, cd_cvm, kpi_name, file_names_loaded, df_reference_ta
             )
 
     df_kpi = df.merge(
-        general_cd_conta, how="left", on=["CD_CVM", "FILE_NAME", "CD_CONTA"]
+        general_cd_conta, how="left", on=["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"]
     )
     df_kpi = df_kpi.merge(
-        distinct_files_cd_conta, how="left", on=["CD_CVM", "FILE_NAME", "CD_CONTA"]
+        distinct_files_cd_conta,
+        how="left",
+        on=["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"],
     )
     df_kpi = df_kpi.merge(
-        distinct_files_ds_conta, how="left", on=["CD_CVM", "FILE_NAME", "DS_CONTA"]
+        distinct_files_ds_conta,
+        how="left",
+        on=["CD_CVM", "FILE_CATEGORY_SHORT", "DS_CONTA"],
     )
 
     df_kpi = df_kpi[df_kpi[["MATCHED_1", "MATCHED_2", "MATCHED_3"]].any(axis=1)]
@@ -154,7 +161,7 @@ def get_kpi_by_cvm_code(df, cd_cvm, kpi_name, file_names_loaded, df_reference_ta
 
 
 def get_kpi_fields(df, df_reference_table, kpi_name):
-    file_names_loaded = df["FILE_NAME"].unique()
+    file_categories_loaded = df["FILE_CATEGORY_SHORT"].unique()
 
     df_reference_table_tmp = df_reference_table[df_reference_table["KPI"] == kpi_name]
     df_reference_table_tmp.loc[:, "CD_CONTA"] = df_reference_table_tmp[
@@ -168,7 +175,7 @@ def get_kpi_fields(df, df_reference_table, kpi_name):
             [
                 df_kpi,
                 get_kpi_by_cvm_code(
-                    df, cd_cvm, kpi_name, file_names_loaded, df_reference_table_tmp
+                    df, cd_cvm, kpi_name, file_categories_loaded, df_reference_table_tmp
                 ),
             ]
         )
