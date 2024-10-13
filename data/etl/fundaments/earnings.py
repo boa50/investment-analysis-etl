@@ -39,7 +39,7 @@ def load_ebitda(df_dre, df_ebit, df_reference_table, verbose=False):
     if verbose:
         print()
         print("EBITDA")
-        print(df_kpi.tail(2))
+        print(df_kpi.tail())
         print()
 
     return df_kpi
