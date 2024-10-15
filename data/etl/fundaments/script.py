@@ -3,7 +3,7 @@ from data.etl.utils import (
     load_files,
     prepare_dataframe,
 )
-from profit import load_profit
+from profit import load_profit, load_cagr_profit_5_years
 from earnings import load_ebit, load_ebitda
 from equity import load_equity
 from roe import load_roe
@@ -43,6 +43,7 @@ df_dre = prepare_dataframe(df_dre, cd_cvm_load)
 df_profit = load_profit(df_dre, df_reference_table)
 df_ebit = load_ebit(df_dre, df_reference_table)
 df_ebitda = load_ebitda(df_dre, df_ebit, df_reference_table)
+df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
 
 del df_dre
 
@@ -84,6 +85,7 @@ df_fundaments = pd.concat(
         df_total_debt,
         df_net_debt,
         df_net_debt_by_ebitda,
+        df_cagr_profit_5_years,
     ]
 )
 
