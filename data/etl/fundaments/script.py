@@ -23,7 +23,7 @@ df_fundaments = pd.DataFrame(
 )
 
 year_initial = 2019
-year_final = 2021
+year_final = 2024
 years_load = list(range(year_initial, year_final + 1))
 
 ### Getting only companies available on basic info file

@@ -67,8 +67,6 @@ df_history = df_history.merge(df_num_stocks, how="left", on="CD_CVM")
 df_history["LPA"] = df_history["PROFIT_ROLLING_YEAR"] / df_history["NUM_TOTAL"]
 df_history["PL"] = df_history["PRICE"] / df_history["LPA"]
 
-df_history = df_history.drop(["PROFIT", "PROFIT_ROLLING_YEAR", "LPA"], axis=1)
-
 
 ### Calculating the Dividend Yield
 df_history = pd.merge(
@@ -91,7 +89,8 @@ df_history = pd.merge(
 
 df_history["DIVIDEND_YIELD"] = df_history["Dividends_1y"] / df_history["PRICE"]
 
-df_history = df_history.drop(["VALUE", "Dividends_1y"], axis=1)
+### Calculating the Dividend Payout
+df_history["DIVIDEND_PAYOUT"] = df_history["Dividends_1y"] / df_history["LPA"]
 
 
 ### Calculating the PVP
@@ -103,10 +102,11 @@ df_history = include_fundament(df_history, df_fundaments, kpi_type, column_name)
 df_history["VP"] = df_history["NET_WORTH"] / df_history["NUM_TOTAL"]
 df_history["PVP"] = df_history["PRICE"] / df_history["VP"]
 
-df_history = df_history.drop(["NET_WORTH", "NET_WORTH_ROLLING_YEAR", "VP"], axis=1)
-
 
 ### Exporting the resulting dataset
+df_history = df_history.drop(["PROFIT", "PROFIT_ROLLING_YEAR", "LPA"], axis=1)
+df_history = df_history.drop(["VALUE", "Dividends_1y"], axis=1)
+df_history = df_history.drop(["NET_WORTH", "NET_WORTH_ROLLING_YEAR", "VP"], axis=1)
 df_history = df_history.drop(["NUM_TOTAL"], axis=1)
 
 print()
