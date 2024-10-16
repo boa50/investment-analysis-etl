@@ -22,7 +22,7 @@ df_fundaments = pd.DataFrame(
     ]
 )
 
-year_initial = 2019
+year_initial = 2011
 year_final = 2024
 years_load = list(range(year_initial, year_final + 1))
 

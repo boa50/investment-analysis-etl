@@ -49,8 +49,6 @@ def delete_unnecessary_files(delete_zip=None):
 
         filepath = join(data_path, filename)
 
-        print(filepath)
-
         Path(filepath).unlink(missing_ok=True)
 
     if delete_zip != None:
