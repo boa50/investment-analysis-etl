@@ -26,10 +26,40 @@ def download_zips(year_initial=2011, year_final=2024):
 
             print("Downloading {} ...".format(filename))
 
-            urlretrieve(url, data_path + filename)
+            urlretrieve(url, join(data_path, filename))
 
 
-def extract_zips():
+def delete_unnecessary_files(delete_zip=None):
+    data_path = "data/raw"
+
+    all_csv = [f for f in listdir(data_path) if isfile(join(data_path, f))]
+    files_to_exclude = []
+
+    patterns_to_exclude = ["_2", "_DFC_", "_DMPL_", "_DRA_", "_DVA_", "_parecer_"]
+
+    for pattern in patterns_to_exclude:
+        pattern = "_cia_aberta" + pattern
+        files = [f for f in all_csv if pattern in f]
+        files_to_exclude.extend(files)
+
+    files_to_exclude.sort()
+
+    for filename in files_to_exclude:
+        print("Deleting {} ...".format(filename))
+
+        filepath = join(data_path, filename)
+
+        print(filepath)
+
+        Path(filepath).unlink(missing_ok=True)
+
+    if delete_zip != None:
+        print("Deleting {} ...".format(delete_zip))
+
+        Path(delete_zip).unlink(missing_ok=True)
+
+
+def extract_zips(delete_zips=False):
     data_path = "data/raw/zips"
 
     data_files = [f for f in listdir(data_path) if isfile(join(data_path, f))]
@@ -39,9 +69,19 @@ def extract_zips():
     for data_file in data_files:
         print("Extracting " + data_file + " ...")
 
-        with zipfile.ZipFile(join(data_path, data_file), "r") as zip_ref:
+        zip_path = join(data_path, data_file)
+
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall("data/raw")
+
+        if delete_zips:
+            delete_unnecessary_files(zip_path)
+        else:
+            delete_unnecessary_files()
+
+    if delete_zips:
+        Path(data_path).rmdir()
 
 
 # download_zips()
-# extract_zips()
+# extract_zips(delete_zips=True)
