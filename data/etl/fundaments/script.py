@@ -50,10 +50,10 @@ df_bpp = load_files(years_load, files_types_load=["BPP"])
 df_bpp["DT_INI_EXERC"] = "1900-01-01"
 df_bpp = prepare_dataframe(df_bpp, cd_cvm_load)
 
-df_equity = load_equity(df_bpp, df_reference_table)
-# df_total_debt = load_total_debt(df_bpp, df_reference_table)
+# df_equity = load_equity(df_bpp, df_reference_table)
+df_total_debt = load_total_debt(df_bpp, df_reference_table)
 
-df_equity.to_csv("data/raw/_test-equity.csv", index=False)
+df_total_debt.to_csv("data/raw/_test-debt.csv", index=False)
 
 # del df_bpp
 
