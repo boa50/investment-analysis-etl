@@ -92,60 +92,65 @@ def get_kpi_by_cvm_code(
 ):
     df_reference_table_tmp = df_reference_table[df_reference_table["CD_CVM"] == cd_cvm]
 
-    general_cd_conta_value = df_reference_table_tmp[
-        df_reference_table_tmp["FILE_CATEGORY_SHORT"] == "-1"
-    ][["CD_CVM", "CD_CONTA"]]
+    ### Based on CD_CONTA
+    cds_conta_reference = df_reference_table_tmp[
+        df_reference_table_tmp["CD_CONTA"] != "-1"
+    ][["CD_CVM", "FILE_PERIOD", "YEAR_START", "YEAR_END", "CD_CONTA"]]
 
-    distinct_files = df_reference_table_tmp[
-        df_reference_table_tmp["FILE_CATEGORY_SHORT"] != "-1"
-    ]
-    distinct_files_categories = distinct_files["FILE_CATEGORY_SHORT"].values
+    cds_conta = pd.DataFrame()
 
-    distinct_files_cd_conta = distinct_files[distinct_files["CD_CONTA"] != "-1.0"][
-        ["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"]
-    ]
-    distinct_files_cd_conta["MATCHED_2"] = True
+    for _, row in cds_conta_reference.iterrows():
+        year_start = row["YEAR_START"]
+        year_end = row["YEAR_END"]
+        file_period = row["FILE_PERIOD"]
 
-    distinct_files_ds_conta = distinct_files[distinct_files["DS_CONTA"] != "-1"][
-        ["CD_CVM", "FILE_CATEGORY_SHORT", "DS_CONTA"]
-    ]
-    distinct_files_ds_conta["MATCHED_3"] = True
+        for fcategory in file_categories_loaded:
+            fcategory_year = int(fcategory[-4:])
+            fcategory_period = fcategory[:3]
 
-    general_cd_conta = pd.DataFrame()
-    for fcategory in list(
-        set(file_categories_loaded).difference(distinct_files_categories)
-    ):
-        for _, row in general_cd_conta_value.iterrows():
-            general_cd_conta = pd.concat(
-                [
-                    general_cd_conta,
-                    pd.DataFrame(
-                        {
-                            "CD_CVM": row["CD_CVM"],
-                            "FILE_CATEGORY_SHORT": fcategory,
-                            "CD_CONTA": str(row["CD_CONTA"]),
-                            "MATCHED_1": True,
-                        },
-                        index=[general_cd_conta.shape[0]],
-                    ),
-                ]
+            is_same_period = (file_period == "all") or (file_period == fcategory_period)
+            is_in_year = (fcategory_year >= year_start) and (
+                (fcategory_year <= year_end) or (year_end == -1)
             )
 
+            if is_same_period and is_in_year:
+                cds_conta = pd.concat(
+                    [
+                        cds_conta,
+                        pd.DataFrame(
+                            {
+                                "CD_CVM": row["CD_CVM"],
+                                "FILE_CATEGORY_SHORT": fcategory,
+                                "CD_CONTA": str(row["CD_CONTA"]),
+                                "MATCHED_CD": True,
+                            },
+                            index=[cds_conta.shape[0]],
+                        ),
+                    ]
+                )
+
+    ### Based on DS_CONTA
+    dss_conta = df_reference_table_tmp[df_reference_table_tmp["DS_CONTA"] != "-1"][
+        ["CD_CVM", "FILE_PERIOD", "YEAR_START", "DS_CONTA"]
+    ]
+    dss_conta["MATCHED_DS"] = True
+
+    dss_conta["YEAR_START"] = dss_conta["YEAR_START"].astype(int).astype(str)
+
+    dss_conta["FILE_CATEGORY_SHORT"] = (
+        dss_conta["FILE_PERIOD"] + "_" + dss_conta["YEAR_START"]
+    )
+
     df_kpi = df.merge(
-        general_cd_conta, how="left", on=["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"]
+        cds_conta, how="left", on=["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"]
     )
     df_kpi = df_kpi.merge(
-        distinct_files_cd_conta,
-        how="left",
-        on=["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"],
-    )
-    df_kpi = df_kpi.merge(
-        distinct_files_ds_conta,
+        dss_conta,
         how="left",
         on=["CD_CVM", "FILE_CATEGORY_SHORT", "DS_CONTA"],
     )
 
-    df_kpi = df_kpi[df_kpi[["MATCHED_1", "MATCHED_2", "MATCHED_3"]].any(axis=1)]
+    df_kpi = df_kpi[df_kpi[["MATCHED_CD", "MATCHED_DS"]].any(axis=1)]
     df_kpi["KPI"] = kpi_name
 
     return df_kpi[

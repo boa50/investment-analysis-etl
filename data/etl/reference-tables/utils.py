@@ -5,8 +5,15 @@ def clear_table(df, cd_cvm_load):
     df_fields = df.copy()
     df_fields = df_fields[df_fields["CD_CVM"].isin(cd_cvm_load)]
     df_fields["DS_CONTA"] = df_fields["DS_CONTA"].str.lower()
+
+    df_stocks_files = pd.read_csv("data/processed/stocks-files.csv")
+
+    df_fields = df_fields.merge(
+        df_stocks_files, how="inner", on=["CD_CVM", "FILE_CATEGORY"]
+    )
+
     df_fields = df_fields[
-        ["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA", "DS_CONTA"]
+        ["CD_CVM", "FILE_CATEGORY", "FILE_CATEGORY_SHORT", "CD_CONTA", "DS_CONTA"]
     ].drop_duplicates()
 
     return df_fields

@@ -14,7 +14,12 @@ df = clear_table(df, cd_cvm_load)
 #     .reset_index()
 # )
 
-kpis = ["lucro ou prejuízo líquido do período", "lucro/prejuízo do período"]
+kpis = [
+    "lucro ou prejuízo líquido do período",
+    "lucro/prejuízo do período",
+    "lucro/prejuízo consolidado do período",
+    "lucro ou prejuízo líquido consolidado do período",
+]
 df = df[df["DS_CONTA"].isin(kpis)]
 print(df)
 df.to_csv("data/raw/_reference-table-profit.csv", index=False)
