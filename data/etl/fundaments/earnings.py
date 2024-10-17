@@ -2,9 +2,7 @@ from utils import get_dre_kpi_info
 
 
 def load_ebit(df_dre, df_reference_table, verbose=False):
-    return get_dre_kpi_info(
-        "EBIT", df_dre, df_reference_table, grouping=True, verbose=verbose
-    )
+    return get_dre_kpi_info("EBIT", df_dre, df_reference_table, verbose=verbose)
 
 
 def load_ebitda(df_dre, df_ebit, df_reference_table, verbose=False):

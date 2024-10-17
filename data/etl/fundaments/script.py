@@ -40,10 +40,10 @@ df_dre = prepare_dataframe(df_dre, cd_cvm_load)
 
 # df_profit = load_profit(df_dre, df_reference_table)
 df_ebit = load_ebit(df_dre, df_reference_table)
-# df_ebitda = load_ebitda(df_dre, df_ebit, df_reference_table)
+df_ebitda = load_ebitda(df_dre, df_ebit, df_reference_table)
 # df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
 
-df_ebit.to_csv("data/raw/_test-ebit.csv", index=False)
+df_ebitda.to_csv("data/raw/_test-ebitda.csv", index=False)
 
 del df_dre
 
