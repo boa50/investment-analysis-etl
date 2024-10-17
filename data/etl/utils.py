@@ -194,7 +194,8 @@ def transform_anual_quarter(df):
 
     dt_diff = df["DT_FIM_EXERC"] - df["DT_INI_EXERC"]
 
-    df_quarter = df[dt_diff <= td_quarter]
+    # The dt_diff >= 80 days was to fix a bug where there were data with periods les than a quarter
+    df_quarter = df[(dt_diff <= td_quarter) & (dt_diff >= datetime.timedelta(days=80))]
     df_quarter_grouped = (
         df_quarter.groupby(["EXERC_YEAR", "CD_CVM"])
         .agg({"VL_CONTA": "sum", "DT_FIM_EXERC": "max"})
