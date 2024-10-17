@@ -75,6 +75,17 @@ cd_cvm_test = [
     906,  # Bradesco
     20257,  # Taesa
     18376,  # Transmissões Paulista
+    ### NEW ONES ###
+    19348,  # Itaú
+    922,  # Banco da Amazônia
+    22616,  # Banco BTG
+    20532,  # Santander
+    2453,  # CEMIG
+    18660,  # CPFL Energias
+    2437,  # Eletrobras
+    20010,  # Equatorial Energia
+    17329,  # ENGIE
+    15539,  # NeoEnergia
 ]
 
 df = df[df["CD_CVM"].isin(cd_cvm_test)][columns]
