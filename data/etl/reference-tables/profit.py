@@ -4,7 +4,7 @@ from utils import clear_table, get_cd_cvm_load, get_years_load
 cd_cvm_load = get_cd_cvm_load()
 years_load = get_years_load()
 
-df = load_files(years_load, ["DRE"])
+df = load_files(years_load, files_types_load=["DRE"])
 df = clear_table(df, cd_cvm_load)
 
 # print(

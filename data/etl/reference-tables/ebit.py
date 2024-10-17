@@ -4,20 +4,15 @@ from utils import clear_table, get_cd_cvm_load, get_years_load
 cd_cvm_load = get_cd_cvm_load()
 years_load = get_years_load()
 
-files_load = [
-    "itr_cia_aberta_DRE_ind_",
-    "dfp_cia_aberta_DRE_ind_",
-]
-
-df = load_files(years_load, files_load)
+df = load_files(years_load, files_types_load=["DRE"])
 df = clear_table(df, cd_cvm_load)
 
-print(
-    df[df["DS_CONTA"].str.contains("resultado antes")]
-    .groupby(["CD_CONTA", "DS_CONTA"])
-    .count()
-    .reset_index()
-)
+# print(
+#     df[df["DS_CONTA"].str.contains("resultado antes")]
+#     .groupby(["CD_CONTA", "DS_CONTA"])
+#     .count()
+#     .reset_index()
+# )
 
 kpis = [
     "resultado antes do resultado financeiro e dos tributos",

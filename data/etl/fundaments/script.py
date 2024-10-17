@@ -38,12 +38,12 @@ df_reference_table = pd.read_csv("data/processed/reference-table.csv")
 df_dre = load_files(years_load, files_types_load=["DRE"])
 df_dre = prepare_dataframe(df_dre, cd_cvm_load)
 
-df_profit = load_profit(df_dre, df_reference_table)
-# df_ebit = load_ebit(df_dre, df_reference_table)
+# df_profit = load_profit(df_dre, df_reference_table)
+df_ebit = load_ebit(df_dre, df_reference_table)
 # df_ebitda = load_ebitda(df_dre, df_ebit, df_reference_table)
 # df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
 
-df_profit.to_csv("data/raw/_test-profit.csv", index=False)
+df_ebit.to_csv("data/raw/_test-ebit.csv", index=False)
 
 del df_dre
 
