@@ -51,6 +51,9 @@ def load_files(years_load, files_types_load):
                 )
                 df_tmp.loc[:, "FILE_TYPE"] = file["FILE_TYPE"]
 
+                df_tmp = df_tmp[df_tmp["ORDEM_EXERC"] == "ÚLTIMO"]
+                df_tmp = df_tmp.drop("ORDEM_EXERC", axis=1)
+
                 df = pd.concat([df, df_tmp])
             else:
                 print(fname + " not found! Skipping")
@@ -62,7 +65,6 @@ def load_files(years_load, files_types_load):
 
 
 def prepare_dataframe(df, cd_cvm_load):
-    df = df[df["ORDEM_EXERC"] == "ÚLTIMO"]
     df_stocks_files = pd.read_csv("data/processed/stocks-files.csv")
     df_stocks_files = df_stocks_files[df_stocks_files["CD_CVM"].isin(cd_cvm_load)]
 
