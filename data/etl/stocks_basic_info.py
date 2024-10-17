@@ -51,6 +51,7 @@ def get_all_stock_info():
 
     df = pd.concat(
         [
+            # Data obtained from https://sistemaswebb3-listados.b3.com.br/listedCompaniesPage/main/1023/overview/overview?language=pt-br
             create_ticker_df(906, "BBDC3;BBDC4", 5330304681, 5311865547),
             create_ticker_df(1023, "BBAS11;BBAS12;BBAS3", 5730834040, 0),
             create_ticker_df(18376, "TRPL3;TRPL4", 257937732, 400945572),
@@ -67,7 +68,7 @@ df = pd.read_csv("data/raw/cad_cia_aberta.csv", encoding="ISO-8859-1", sep=";")
 
 df = df[(df["SIT"] == "ATIVO")]
 
-columns = ["CD_CVM", "DENOM_SOCIAL", "CNPJ_CIA", "SETOR_ATIV", "CONTROLE_ACIONARIO"]
+columns = ["CD_CVM", "DENOM_SOCIAL", "CNPJ_CIA", "CONTROLE_ACIONARIO"]
 
 cd_cvm_test = [
     1023,  # Banco do Brasil
