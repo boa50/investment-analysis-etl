@@ -35,25 +35,25 @@ df_reference_table = pd.read_csv("data/processed/reference-table.csv")
 
 
 ### KPIs from DRE files
-df_dre = load_files(years_load, files_types_load=["DRE"])
-df_dre = prepare_dataframe(df_dre, cd_cvm_load)
+# df_dre = load_files(years_load, files_types_load=["DRE"])
+# df_dre = prepare_dataframe(df_dre, cd_cvm_load)
 
 # df_profit = load_profit(df_dre, df_reference_table)
-df_ebit = load_ebit(df_dre, df_reference_table)
-df_ebitda = load_ebitda(df_dre, df_ebit, df_reference_table)
+# df_ebit = load_ebit(df_dre, df_reference_table)
+# df_ebitda = load_ebitda(df_dre, df_ebit, df_reference_table)
 # df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
 
-df_ebitda.to_csv("data/raw/_test-ebitda.csv", index=False)
-
-del df_dre
+# del df_dre
 
 ### KPIs from BPP files
-# df_bpp = load_files(years_load, files_types_load=["BPP"])
-# df_bpp["DT_INI_EXERC"] = "1900-01-01"
-# df_bpp = prepare_dataframe(df_bpp, cd_cvm_load)
+df_bpp = load_files(years_load, files_types_load=["BPP"])
+df_bpp["DT_INI_EXERC"] = "1900-01-01"
+df_bpp = prepare_dataframe(df_bpp, cd_cvm_load)
 
-# df_equity = load_equity(df_bpp, df_reference_table)
+df_equity = load_equity(df_bpp, df_reference_table)
 # df_total_debt = load_total_debt(df_bpp, df_reference_table)
+
+df_equity.to_csv("data/raw/_test-equity.csv", index=False)
 
 # del df_bpp
 
