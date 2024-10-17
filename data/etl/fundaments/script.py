@@ -53,16 +53,16 @@ df_bpp = prepare_dataframe(df_bpp, cd_cvm_load)
 # df_equity = load_equity(df_bpp, df_reference_table)
 df_total_debt = load_total_debt(df_bpp, df_reference_table)
 
-df_total_debt.to_csv("data/raw/_test-debt.csv", index=False)
-
 # del df_bpp
 
 ## KPIs from BPA files
-# df_bpa = load_files(years_load, files_types_load=["BPA"])
-# df_bpa["DT_INI_EXERC"] = "1900-01-01"
-# df_bpa = prepare_dataframe(df_bpa, cd_cvm_load)
+df_bpa = load_files(years_load, files_types_load=["BPA"])
+df_bpa["DT_INI_EXERC"] = "1900-01-01"
+df_bpa = prepare_dataframe(df_bpa, cd_cvm_load)
 
-# df_net_debt = load_net_debt(df_bpa, df_total_debt, df_reference_table)
+df_net_debt = load_net_debt(df_bpa, df_total_debt, df_reference_table)
+
+df_net_debt.to_csv("data/raw/_test-net-debt.csv", index=False)
 
 # del df_bpa
 
