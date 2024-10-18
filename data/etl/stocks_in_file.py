@@ -8,12 +8,21 @@ years_load = list(range(year_initial, year_final + 1))
 
 files_types_load = ["BPA"]
 
+try:
+    df_final = pd.read_csv("data/processed/stocks-files.csv")
+except FileNotFoundError:
+    df_final = pd.DataFrame()
+
 df = load_files(years_load, files_types_load)
 
-### Getting only companies available on basic info file
+### Getting only companies available on basic info file and that are not in the final file
 df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
 
-df = df[df["CD_CVM"].isin(df_basic_info["CD_CVM"].values)]
+cd_cvm_load = list(
+    set(df_basic_info["CD_CVM"].values).difference(df_final["CD_CVM"].values)
+)
+
+df = df[df["CD_CVM"].isin(cd_cvm_load)]
 df["FILE_CATEGORY"] = df["FILE_CATEGORY"].astype(str)
 df[["FILE_PREFIX", "FILE_SUFIX", "FILE_YEAR"]] = df["FILE_CATEGORY"].str.split(
     "_", n=2, expand=True
@@ -27,4 +36,10 @@ df = (
 
 df = df.drop(["FILE_PREFIX", "FILE_YEAR"], axis=1)
 
-df.to_csv("data/processed/stocks-files.csv", index=False)
+df_final = pd.concat([df_final, df])
+
+df_final = df_final.sort_values(by=["CD_CVM", "FILE_CATEGORY"])
+
+print(df_final)
+
+df_final.to_csv("data/processed/stocks-files.csv", index=False)
