@@ -1,20 +1,6 @@
 import pandas as pd
+from utils import get_main_ticker
 from data.etl.scrapping.b3 import load_dividends
-
-
-def get_main_ticker(tickers):
-    tickers = tickers.split(";")
-
-    for ticker in tickers:
-        if ticker[4] == "4":
-            return ticker
-
-    for ticker in tickers:
-        if ticker[4] == "3":
-            return ticker
-
-    return tickers[0]
-
 
 try:
     df_dividends = pd.read_csv("data/processed/stocks-dividends.csv")
@@ -23,7 +9,7 @@ except FileNotFoundError:
 
 ### Getting data related to stocks splitting
 df_splits = pd.read_csv("data/processed/stocks-splits.csv")
-df_splits["DATE"] = pd.to_datetime(df_splits["DATE"])
+df_splits["DATE"] = pd.to_datetime(df_splits["DATE"]).dt.date
 
 
 ### Getting only companies available on basic info file
@@ -35,10 +21,12 @@ df_basic_info = df_basic_info[
 
 for idx in range(df_basic_info.shape[0]):
     company = df_basic_info.iloc[idx]
+
+    print("Loading dividends for CD_CVM: {}".format(company["CD_CVM"]))
+
     ticker = get_main_ticker(company["TICKERS"])
 
-    # tk_dividends = load_dividends(company["CD_CVM"], ticker[:4])
-    tk_dividends = pd.read_csv("data/raw/_test-bbas-dividends.csv")
+    tk_dividends = load_dividends(company["CD_CVM"], ticker[:4])
     tk_dividends["DATE"] = pd.to_datetime(
         tk_dividends["DATE"], format="%d/%m/%Y"
     ).dt.date
@@ -55,4 +43,4 @@ for idx in range(df_basic_info.shape[0]):
 
 print(df_dividends.tail())
 
-df_dividends.to_csv("data/processed/stocks-dividends-test.csv", index=False)
+df_dividends.to_csv("data/processed/stocks-dividends.csv", index=False)

@@ -92,4 +92,6 @@ def load_dividends(cd_cvm, ticker_base_code):
     except:
         print("There isn't another page to load")
 
+    driver.quit()
+
     return df_dividends

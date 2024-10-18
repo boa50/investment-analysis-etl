@@ -232,3 +232,22 @@ def transform_anual_quarter(df):
     ].transform(lambda s: s.rolling(4).sum())
 
     return df_quarter
+
+
+def get_main_ticker(tickers):
+    tickers = tickers.split(";")
+
+    for ticker in tickers:
+        if ticker[4] == "4":
+            return ticker
+
+    for ticker in tickers:
+        if ticker[4] == "3":
+            return ticker
+
+    return tickers[0]
+
+
+def get_yf_ticker(tickers):
+    ticker = get_main_ticker(tickers)
+    return ticker + ".SA"

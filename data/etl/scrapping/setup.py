@@ -14,6 +14,6 @@ def setup_selenium(url, is_headless=True):
     )
     driver.get(url)
 
-    wait = WebDriverWait(driver, 1)
+    wait = WebDriverWait(driver, 3)
 
     return driver, wait
