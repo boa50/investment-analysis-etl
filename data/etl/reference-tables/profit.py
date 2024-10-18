@@ -1,7 +1,8 @@
 from data.etl.utils import load_files
 from utils import clear_table, get_cd_cvm_load, get_years_load
 
-cd_cvm_load = get_cd_cvm_load()
+# cd_cvm_load = get_cd_cvm_load()
+cd_cvm_load = [19348]
 years_load = get_years_load()
 
 df = load_files(years_load, files_types_load=["DRE"])

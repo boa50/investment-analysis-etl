@@ -9,26 +9,32 @@ from equity import load_equity
 from roe import load_roe
 from debt import load_total_debt, load_net_debt, load_net_debt_by_ebitda
 
-
-df_fundaments = pd.DataFrame(
-    columns=[
-        "CD_CVM",
-        "DT_INI_EXERC",
-        "DT_FIM_EXERC",
-        "KPI",
-        "VL_CONTA",
-        "EXERC_YEAR",
-        "VL_CONTA_ROLLING_YEAR",
-    ]
-)
-
 year_initial = 2011
 year_final = 2024
 years_load = list(range(year_initial, year_final + 1))
 
+try:
+    df_fundaments = pd.read_csv("data/processed/stocks-fundaments.csv")
+except FileNotFoundError:
+    df_fundaments = pd.DataFrame(
+        columns=[
+            "CD_CVM",
+            "DT_INI_EXERC",
+            "DT_FIM_EXERC",
+            "KPI",
+            "VL_CONTA",
+            "EXERC_YEAR",
+            "VL_CONTA_ROLLING_YEAR",
+        ]
+    )
+
 ### Getting only companies available on basic info file
 df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
-cd_cvm_load = df_basic_info["CD_CVM"].values
+cd_cvm_load = list(
+    set(df_basic_info["CD_CVM"].values).difference(df_fundaments["CD_CVM"].values)
+)
+
+print("Loading fundaments from {}".format(cd_cvm_load))
 
 ### Getting the KPIs reference table
 df_reference_table = pd.read_csv("data/processed/reference-table.csv")
@@ -71,6 +77,7 @@ df_net_debt_by_ebitda = load_net_debt_by_ebitda(df_net_debt, df_ebitda)
 
 df_fundaments = pd.concat(
     [
+        df_fundaments,
         df_profit,
         df_equity,
         df_roe,
@@ -80,6 +87,14 @@ df_fundaments = pd.concat(
         df_net_debt,
         df_net_debt_by_ebitda,
         df_cagr_profit_5_years,
+    ]
+)
+
+df_fundaments = df_fundaments.sort_values(
+    by=[
+        "KPI",
+        "CD_CVM",
+        "DT_FIM_EXERC",
     ]
 )
 
