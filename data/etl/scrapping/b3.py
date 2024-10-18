@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup
 
-from setup import setup_selenium
+from data.etl.scrapping.setup import setup_selenium
 
 import pandas as pd
 
@@ -37,6 +37,12 @@ def load_dividends_from_page(html):
 
 
 def load_dividends(cd_cvm, ticker_base_code):
+    print(
+        "Loading dividends from B3 for the CD_CVM {} and TICKER_BASE {}".format(
+            cd_cvm, ticker_base_code
+        )
+    )
+
     url = "https://sistemaswebb3-listados.b3.com.br/listedCompaniesPage/main/{}/{}/corporate-actions?language=pt-br".format(
         cd_cvm, ticker_base_code
     )
@@ -86,9 +92,4 @@ def load_dividends(cd_cvm, ticker_base_code):
     except:
         print("There isn't another page to load")
 
-    df_dividends["DATE"] = pd.to_datetime(df_dividends["DATE"], format="%d/%m/%Y")
-
     return df_dividends
-
-
-print(load_dividends(1023, "BBAS"))
