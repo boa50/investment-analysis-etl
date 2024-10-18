@@ -56,6 +56,7 @@ def get_all_stock_info():
             create_ticker_df(1023, "BBAS11;BBAS12;BBAS3", 5730834040, 0),
             create_ticker_df(18376, "TRPL3;TRPL4", 257937732, 400945572),
             create_ticker_df(20257, "TAEE11;TAEE3;TAEE4", 590714069, 442782652),
+            create_ticker_df(19348, "ITUB4;ITUB3", 4958290359, 4845844989),
         ]
     )
 
@@ -68,24 +69,26 @@ df = pd.read_csv("data/raw/cad_cia_aberta.csv", encoding="ISO-8859-1", sep=";")
 
 df = df[(df["SIT"] == "ATIVO")]
 
-columns = ["CD_CVM", "DENOM_SOCIAL", "CNPJ_CIA", "CONTROLE_ACIONARIO"]
+columns = ["CD_CVM", "DENOM_COMERC"]
 
 cd_cvm_test = [
     1023,  # Banco do Brasil
     906,  # Bradesco
     20257,  # Taesa
     18376,  # Transmissões Paulista
-    ### NEW ONES ###
     19348,  # Itaú
-    922,  # Banco da Amazônia
-    22616,  # Banco BTG
-    20532,  # Santander
-    2453,  # CEMIG
-    18660,  # CPFL Energias
-    2437,  # Eletrobras
-    20010,  # Equatorial Energia
-    17329,  # ENGIE
-    15539,  # NeoEnergia
+    # 922,  # Banco da Amazônia
+    # 22616,  # Banco BTG
+    # 20532,  # Santander
+    # 2453,  # CEMIG
+    # 18660,  # CPFL Energias
+    # 2437,  # Eletrobras
+    # 20010,  # Equatorial Energia
+    # 17329,  # ENGIE
+    # 15539,  # NeoEnergia
+    # 19445,  # COPASA
+    # 18627,  # SANEPAR
+    # 14443,  # SABESP
 ]
 
 df = df[df["CD_CVM"].isin(cd_cvm_test)][columns]
@@ -102,6 +105,15 @@ df = df.drop_duplicates()
 ticker_df = get_all_stock_info()
 
 df = pd.merge(df, ticker_df, on="CD_CVM")
+
+### Joining with sector table
+df["CODIGO"] = df["TICKERS"].str[:4]
+
+df_sector = pd.read_csv("data/processed/b3-sectors.csv")
+
+df = df.merge(df_sector, how="left", on="CODIGO")
+
+df = df.drop("CODIGO", axis=1)
 
 print(df.head())
 
