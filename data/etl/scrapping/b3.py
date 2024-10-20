@@ -47,7 +47,7 @@ def load_dividends(cd_cvm, ticker_base_code):
         cd_cvm, ticker_base_code
     )
 
-    driver, wait = setup_selenium(url, is_headless=True)
+    driver, wait = setup_selenium(url, is_headless=False)
 
     select_dividends = Select(
         wait.until(EC.element_to_be_clickable((By.ID, "selectType")))
@@ -95,3 +95,7 @@ def load_dividends(cd_cvm, ticker_base_code):
     driver.quit()
 
     return df_dividends
+
+
+load_dividends(1023, "BBAS")
+load_dividends(1023, "BBAS")
