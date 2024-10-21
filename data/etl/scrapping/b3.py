@@ -49,6 +49,7 @@ def load_historical_dividends(cd_cvm, ticker_base_code):
         cd_cvm, ticker_base_code
     )
 
+    # Not using proxy right now
     driver, wait = setup_selenium(url, is_headless=True, proxy=None)
 
     try:
@@ -95,6 +96,6 @@ def load_historical_dividends(cd_cvm, ticker_base_code):
 
     driver.quit()
 
-    df_dividends.to_csv(f"data/raw/_raw_dividends_{ticker_base_code}.csv", index=False)
+    df_dividends.to_csv(f"data/raw/_dividends_{ticker_base_code}.csv", index=False)
 
     return df_dividends

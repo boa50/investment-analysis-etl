@@ -31,6 +31,7 @@ for idx in range(df_basic_info.shape[0]):
 
     df_splits = pd.concat([df_splits, tk_splits])
 
+### Not all displayed splits are real ones, must remove Bonificações
 print(df_splits)
 
-df_splits.to_csv("data/processed/stocks-splits.csv", index=False)
+df_splits.to_csv("data/raw/stocks-splits-all.csv", index=False)
