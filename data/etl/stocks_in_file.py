@@ -40,6 +40,12 @@ df_final = pd.concat([df_final, df])
 
 df_final = df_final.sort_values(by=["CD_CVM", "FILE_CATEGORY"])
 
+# Fixing punctual problem where the CD_CVM 19348 doens't have all periods on the itr_con_2012 file
+df_final.loc[
+    (df_final["CD_CVM"] == 19348) & (df_final["FILE_CATEGORY"] == "itr_con_2012"),
+    "FILE_CATEGORY",
+] = "itr_ind_2012"
+
 print(df_final)
 
 df_final.to_csv("data/processed/stocks-files.csv", index=False)

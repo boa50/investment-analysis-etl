@@ -54,3 +54,5 @@ def load_cagr_profit_5_years(df_profit, verbose=False):
         print("CAGR PROFIT 5 YEARS")
         print(df_kpi.tail())
         print()
+
+    return df_kpi

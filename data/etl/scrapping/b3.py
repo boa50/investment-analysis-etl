@@ -87,7 +87,14 @@ def load_historical_dividends(cd_cvm, ticker_base_code):
 
     while is_pagination:
         try:
+            previous_el = driver.find_elements(by=By.CSS_SELECTOR, value="td")[1]
+
             next_page.click()
+
+            wait.until(
+                lambda drv: drv.find_elements(by=By.CSS_SELECTOR, value="td")[1]
+                != previous_el
+            )
 
             df_new_dividends = load_dividends_from_page(driver.page_source)
             df_dividends = pd.concat([df_dividends, df_new_dividends])

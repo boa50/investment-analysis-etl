@@ -90,6 +90,8 @@ df_fundaments = pd.concat(
     ]
 )
 
+print(df_fundaments)
+
 df_fundaments = df_fundaments.sort_values(
     by=[
         "KPI",

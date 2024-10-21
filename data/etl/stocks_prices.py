@@ -41,10 +41,12 @@ df_prices = pd.DataFrame(columns=["CD_CVM", "TICKER", "DATE", "PRICE"])
 
 for idx in range(df_basic_info.shape[0]):
     company = df_basic_info.iloc[idx]
+    ticker = get_yf_ticker(company["TICKERS"])
+
+    print(f"Getting prices for {ticker} CD_CVM: {company['CD_CVM']}")
 
     time.sleep(random.randint(1, 7))
 
-    ticker = get_yf_ticker(company["TICKERS"])
     prices = get_prices(ticker)
 
     prices["TICKER"] = get_main_ticker(company["TICKERS"])

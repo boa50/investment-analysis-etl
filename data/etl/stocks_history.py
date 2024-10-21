@@ -12,6 +12,10 @@ df_fundaments = pd.read_csv(
 ### Function to include fundament data into the history dataframe
 def include_fundament(df_history, df_fundaments, kpi_type, column_name):
     df_fundaments_filtered = df_fundaments[df_fundaments["KPI"] == kpi_type]
+
+    print(df_fundaments_filtered.dtypes)
+    print(df_history.dtypes)
+
     df_history = df_history.merge(
         df_fundaments_filtered,
         how="left",

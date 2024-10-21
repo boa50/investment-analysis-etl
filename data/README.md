@@ -6,7 +6,7 @@
  - Run the etl/fundaments/script.py
  - Run the etl/stocks_dividends.py
  - Run the etl/stocks_prices.py
- - Run the etl/stocks_right_prices.py
+ - Run the etl/stocks_right_price.py
  - Run the etl/stocks_history.py
 
 
