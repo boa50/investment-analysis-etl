@@ -1,4 +1,5 @@
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup
@@ -25,6 +26,7 @@ def load_dividends_from_page(html):
         dividend = pd.DataFrame(
             {
                 "DATE": row[5].text,
+                "STOCK_TYPE": row[0].text,
                 "VALUE": float(row[2].text.replace(",", ".")),
                 "TYPE": row[4].text,
             },
@@ -36,9 +38,9 @@ def load_dividends_from_page(html):
     return df_dividends
 
 
-def load_dividends(cd_cvm, ticker_base_code):
+def load_historical_dividends(cd_cvm, ticker_base_code):
     print(
-        "Loading dividends from B3 for the CD_CVM {} and TICKER_BASE {}".format(
+        "Loading historical dividends from B3 for the CD_CVM {} and TICKER_BASE {}".format(
             cd_cvm, ticker_base_code
         )
     )
@@ -47,12 +49,16 @@ def load_dividends(cd_cvm, ticker_base_code):
         cd_cvm, ticker_base_code
     )
 
-    driver, wait = setup_selenium(url, is_headless=False)
+    driver, wait = setup_selenium(url, is_headless=True, proxy=None)
 
-    select_dividends = Select(
-        wait.until(EC.element_to_be_clickable((By.ID, "selectType")))
-    )
-    select_dividends.select_by_value("2")
+    try:
+        select_dividends = Select(
+            wait.until(EC.element_to_be_clickable((By.ID, "selectType")))
+        )
+        select_dividends.select_by_value("2")
+    except TimeoutException:
+        print("Timeout changing to the dividends page. Retrying")
+        load_historical_dividends(cd_cvm, ticker_base_code)
 
     try:
         select_elements_per_page = Select(
@@ -68,34 +74,27 @@ def load_dividends(cd_cvm, ticker_base_code):
         )
         list_pages = list_pagination.find_elements(by=By.CSS_SELECTOR, value="a")
         next_page = list_pages[-1]
+        is_pagination = True
     except:
         print("There is no pagination!!!")
+        is_pagination = False
 
     df_dividends = pd.DataFrame()
 
     df_new_dividends = load_dividends_from_page(driver.page_source)
     df_dividends = pd.concat([df_dividends, df_new_dividends])
 
-    try:
-        next_page.click()
+    while is_pagination:
+        try:
+            next_page.click()
 
-        df_new_dividends = load_dividends_from_page(driver.page_source)
-        df_dividends = pd.concat([df_dividends, df_new_dividends])
-    except:
-        print("There isn't another page to load")
-
-    try:
-        next_page.click()
-
-        df_new_dividends = load_dividends_from_page(driver.page_source)
-        df_dividends = pd.concat([df_dividends, df_new_dividends])
-    except:
-        print("There isn't another page to load")
+            df_new_dividends = load_dividends_from_page(driver.page_source)
+            df_dividends = pd.concat([df_dividends, df_new_dividends])
+        except StaleElementReferenceException:
+            break
 
     driver.quit()
 
+    df_dividends.to_csv(f"data/raw/_raw_dividends_{ticker_base_code}.csv", index=False)
+
     return df_dividends
-
-
-load_dividends(1023, "BBAS")
-load_dividends(1023, "BBAS")

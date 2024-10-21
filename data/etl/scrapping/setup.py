@@ -1,9 +1,6 @@
 from selenium import webdriver
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.proxy import Proxy, ProxyType
-from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
@@ -56,29 +53,28 @@ def get_proxy():
 
 def setup_selenium(url, is_headless=True, proxy=get_proxy()):
     timeout = 3
-    options = webdriver.FirefoxOptions()
+    options = webdriver.ChromeOptions()
 
-    options.proxy = Proxy(
-        {
-            "proxyType": ProxyType.MANUAL,
-            "httpProxy": proxy,
-            "sslProxy": proxy,
-        }
-    )
+    if proxy != None:
+        options.proxy = Proxy(
+            {
+                "proxyType": ProxyType.MANUAL,
+                "httpProxy": proxy,
+                "sslProxy": proxy,
+            }
+        )
 
     if is_headless:
         options.add_argument("-headless")
 
-    driver = webdriver.Firefox(
-        service=FirefoxService(GeckoDriverManager().install()), options=options
-    )
+    options.timeouts = {"pageLoad": timeout * 5000}
 
-    driver.set_page_load_timeout(timeout)
+    driver = webdriver.Chrome(options=options)
 
     try:
         driver.get(url)
     except Exception as error:
-        print(error)
+        print(error.msg)
         driver.quit()
         setup_selenium(url, is_headless=is_headless, proxy=get_proxy())
 
@@ -87,6 +83,5 @@ def setup_selenium(url, is_headless=True, proxy=get_proxy()):
     return driver, wait
 
 
-url = "https://api.ipify.org/"
-
-driver, wait = setup_selenium(url, is_headless=False)
+### Setup tests
+# setup_selenium("https://api.ipify.org/", is_headless=False)
