@@ -3,15 +3,15 @@ from data.etl.utils import load_files
 from utils import clear_table, get_cd_cvm_load, get_years_load
 
 # cd_cvm_load = get_cd_cvm_load()
-cd_cvm_load = [19348]
+cd_cvm_load = [2453, 18660]
 years_load = get_years_load()
 
 df = load_files(years_load, files_types_load=["DRE"])
 
 # Banks don't have EBITDA
 # https://investalk.bb.com.br/noticias/quero-aprender/entenda-o-balanco-dos-bancos-e-porque-e-diferente-de-outras-empresas
-cd_cvm_load_excluding_banks = list(set(cd_cvm_load).difference([906, 1023]))
-df = clear_table(df, cd_cvm_load_excluding_banks)
+# cd_cvm_load = list(set(cd_cvm_load).difference([906, 1023]))
+df = clear_table(df, cd_cvm_load)
 
 
 ### Negative values
@@ -26,7 +26,7 @@ df = clear_table(df, cd_cvm_load_excluding_banks)
 # df_general = df[df["DS_CONTA"].isin(kpis)]
 
 # df_case01 = df[df["CD_CVM"].isin([18376])]
-df_case01 = df[df["CD_CVM"].isin([19348])]
+df_case01 = df.copy()
 
 # print(
 #     df_case01[df_case01["DS_CONTA"].str.contains("outras receitas")]
@@ -41,7 +41,7 @@ df_case01 = df_case01[df_case01["DS_CONTA"].isin(kpis)]
 
 
 # df_case02 = df[df["CD_CVM"].isin([20257])]
-df_case02 = df[df["CD_CVM"].isin([19348])]
+df_case02 = df.copy()
 
 # print(
 #     df_case02[df_case02["DS_CONTA"].str.contains("depreciação")]

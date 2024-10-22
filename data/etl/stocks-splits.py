@@ -32,6 +32,7 @@ for idx in range(df_basic_info.shape[0]):
     df_splits = pd.concat([df_splits, tk_splits])
 
 ### Not all displayed splits are real ones, must remove Bonificações
+# A better source of information could be https://www.dadosdemercado.com.br/acoes/TICKER/desdobramentos
 print(df_splits)
 
 df_splits.to_csv("data/raw/stocks-splits-all.csv", index=False)

@@ -22,6 +22,8 @@ cd_cvm_load = list(
     set(df_basic_info["CD_CVM"].values).difference(df_final["CD_CVM"].values)
 )
 
+print(f"Checking stocks in files for CD_CVM: {cd_cvm_load}")
+
 df = df[df["CD_CVM"].isin(cd_cvm_load)]
 df["FILE_CATEGORY"] = df["FILE_CATEGORY"].astype(str)
 df[["FILE_PREFIX", "FILE_SUFIX", "FILE_YEAR"]] = df["FILE_CATEGORY"].str.split(

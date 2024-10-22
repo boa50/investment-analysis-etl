@@ -4,6 +4,8 @@
  - Run the etl/stocks_in_file.py
  - Update the reference table based on all files in etl/reference-tables
  - Run the etl/fundaments/script.py
+ - Run the etl/scrapping/b3.py ->  load_historical_dividends()
+ - Get stocks splits
  - Run the etl/stocks_dividends.py
  - Run the etl/stocks_prices.py
  - Run the etl/stocks_right_price.py

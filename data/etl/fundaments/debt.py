@@ -63,7 +63,30 @@ def load_net_debt_by_ebitda(df_net_debt, df_ebitda, verbose=False):
     if verbose:
         print()
         print("NET_DEBT_BY_EBITDA")
-        # print(df_kpi.head())
+        print(df_kpi)
+        print()
+
+    return df_kpi
+
+
+def load_net_debt_by_ebit(df_net_debt, df_ebit, verbose=False):
+    df_net_debt = df_net_debt.drop(
+        ["DT_INI_EXERC", "KPI", "EXERC_YEAR", "VL_CONTA_ROLLING_YEAR"], axis=1
+    )
+    df_ebit = df_ebit.drop("VL_CONTA", axis=1)
+
+    df_kpi = df_ebit.merge(df_net_debt, how="left", on=["CD_CVM", "DT_FIM_EXERC"])
+
+    df_kpi["NET_DEBT_BY_EBIT"] = df_kpi["VL_CONTA"] / df_kpi["VL_CONTA_ROLLING_YEAR"]
+    df_kpi["VL_CONTA_ROLLING_YEAR"] = -1
+    df_kpi["VL_CONTA"] = df_kpi["NET_DEBT_BY_EBIT"]
+    df_kpi["KPI"] = "NET_DEBT_BY_EBIT"
+
+    df_kpi = df_kpi.drop("NET_DEBT_BY_EBIT", axis=1)
+
+    if verbose:
+        print()
+        print("NET_DEBT_BY_EBIT")
         print(df_kpi)
         print()
 

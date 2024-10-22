@@ -34,10 +34,15 @@ def get_prices(ticker):
     return hist
 
 
+try:
+    df_prices = pd.read_csv("data/processed/stocks-prices.csv")
+except FileNotFoundError:
+    df_prices = pd.DataFrame(columns=["CD_CVM", "TICKER", "DATE", "PRICE"])
+
 ### Getting only companies available on basic info file
 df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
-
-df_prices = pd.DataFrame(columns=["CD_CVM", "TICKER", "DATE", "PRICE"])
+# Only new stocks
+df_basic_info = df_basic_info[~df_basic_info["CD_CVM"].isin(df_prices["CD_CVM"].values)]
 
 for idx in range(df_basic_info.shape[0]):
     company = df_basic_info.iloc[idx]
@@ -54,6 +59,6 @@ for idx in range(df_basic_info.shape[0]):
 
     df_prices = pd.concat([df_prices, prices])
 
-print(df_prices.head())
+print(df_prices.tail())
 
 df_prices.to_csv("data/processed/stocks-prices.csv", index=False)
