@@ -26,7 +26,7 @@ def get_yf_ticker(tickers):
 def get_prices(ticker):
     data = yf.Ticker(ticker)
 
-    hist = data.history(period="10y")
+    hist = data.history(period="10y", interval="1wk")
     hist = hist["Close"].reset_index()
     hist["Date"] = hist["Date"].dt.date
     hist.columns = ["DATE", "PRICE"]
