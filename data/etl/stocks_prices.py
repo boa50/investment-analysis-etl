@@ -41,7 +41,7 @@ except FileNotFoundError:
 
 ### Getting only companies available on basic info file
 df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
-# Only new stocks
+# Only stocks not available on the original dataset
 df_basic_info = df_basic_info[~df_basic_info["CD_CVM"].isin(df_prices["CD_CVM"].values)]
 
 for idx in range(df_basic_info.shape[0]):

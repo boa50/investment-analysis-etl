@@ -13,8 +13,6 @@ try:
 except FileNotFoundError:
     df_final = pd.DataFrame()
 
-df = load_files(years_load, files_types_load)
-
 ### Getting only companies available on basic info file and that are not in the final file
 df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
 
@@ -22,7 +20,10 @@ cd_cvm_load = list(
     set(df_basic_info["CD_CVM"].values).difference(df_final["CD_CVM"].values)
 )
 
+
 print(f"Checking stocks in files for CD_CVM: {cd_cvm_load}")
+
+df = load_files(years_load, files_types_load)
 
 df = df[df["CD_CVM"].isin(cd_cvm_load)]
 df["FILE_CATEGORY"] = df["FILE_CATEGORY"].astype(str)

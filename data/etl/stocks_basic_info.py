@@ -25,6 +25,9 @@ def get_all_stock_info():
             create_ticker_df(19348, "ITUB4;ITUB3", 4958290359, 4845844989),
             create_ticker_df(2453, "CMIG4;CMIG3", 956601911, 1905179984),
             create_ticker_df(18660, "CPFE3", 1152254440, 0),
+            create_ticker_df(19445, "CSMG3", 380253069, 0),
+            create_ticker_df(18627, "SAPR3;SAPR4;SAPR11", 503735259, 1007470260),
+            create_ticker_df(14443, "SBSP3", 683509869, 0),
         ]
     )
 
@@ -54,9 +57,9 @@ cd_cvm_test = [
     # 20010,  # Equatorial Energia
     # 17329,  # ENGIE
     # 15539,  # NeoEnergia
-    # 19445,  # COPASA
-    # 18627,  # SANEPAR
-    # 14443,  # SABESP
+    19445,  # COPASA
+    18627,  # SANEPAR
+    14443,  # SABESP
 ]
 
 df = df[df["CD_CVM"].isin(cd_cvm_test)][columns]
