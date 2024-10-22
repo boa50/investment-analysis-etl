@@ -28,6 +28,9 @@ def get_all_stock_info():
             create_ticker_df(19445, "CSMG3", 380253069, 0),
             create_ticker_df(18627, "SAPR3;SAPR4;SAPR11", 503735259, 1007470260),
             create_ticker_df(14443, "SBSP3", 683509869, 0),
+            create_ticker_df(922, "BAZA3", 56058315, 0),
+            create_ticker_df(22616, "BPAC3;BPAC5;BPAC11", 7244165568, 4261954360),
+            create_ticker_df(20532, "SANB3;SANB4;SANB11", 3818695031, 3679836020),
         ]
     )
 
@@ -48,9 +51,9 @@ cd_cvm_test = [
     20257,  # Taesa
     18376,  # Transmissões Paulista
     19348,  # Itaú
-    # 922,  # Banco da Amazônia
-    # 22616,  # Banco BTG
-    # 20532,  # Santander
+    922,  # Banco da Amazônia
+    22616,  # Banco BTG
+    20532,  # Santander
     2453,  # CEMIG
     18660,  # CPFL Energias
     # 2437,  # Eletrobras

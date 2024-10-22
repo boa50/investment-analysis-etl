@@ -20,7 +20,6 @@ cd_cvm_load = list(
     set(df_basic_info["CD_CVM"].values).difference(df_final["CD_CVM"].values)
 )
 
-
 print(f"Checking stocks in files for CD_CVM: {cd_cvm_load}")
 
 df = load_files(years_load, files_types_load)
