@@ -13,9 +13,6 @@ df_fundaments = pd.read_csv(
 def include_fundament(df_history, df_fundaments, kpi_type, column_name):
     df_fundaments_filtered = df_fundaments[df_fundaments["KPI"] == kpi_type]
 
-    print(df_fundaments_filtered.dtypes)
-    print(df_history.dtypes)
-
     df_history = df_history.merge(
         df_fundaments_filtered,
         how="left",
@@ -58,6 +55,8 @@ for ticker in df_prices["TICKER"].unique():
     df_tmp = df_tmp.ffill()
     df_history = pd.concat([df_history, df_tmp])
 
+df_history = df_history.dropna(subset=["TICKER"])
+df_history["CD_CVM"] = df_history["CD_CVM"].astype(int)
 
 ### Calculating the P/L
 kpi_type = "PROFIT"
@@ -112,6 +111,8 @@ df_history = df_history.drop(["PROFIT", "PROFIT_ROLLING_YEAR", "LPA"], axis=1)
 df_history = df_history.drop(["VALUE", "Dividends_1y"], axis=1)
 df_history = df_history.drop(["NET_WORTH", "NET_WORTH_ROLLING_YEAR", "VP"], axis=1)
 df_history = df_history.drop(["NUM_TOTAL"], axis=1)
+
+df_history.sort_values(by=["TICKER", "DATE"])
 
 print()
 print(df_history.head())
