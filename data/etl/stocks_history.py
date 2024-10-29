@@ -8,16 +8,6 @@ df_fundaments = pd.read_csv(
     parse_dates=["DT_INI_EXERC", "DT_FIM_EXERC"],
 )
 
-### The code below is to fix some unknown bug with the dates
-# df_fundaments["DT_INI_EXERC"] = pd.to_datetime(
-#     df_fundaments["DT_INI_EXERC"], format="mixed"
-# ).dt.date
-# df_fundaments["DT_FIM_EXERC"] = pd.to_datetime(
-#     df_fundaments["DT_FIM_EXERC"], format="mixed"
-# ).dt.date
-
-# df_fundaments.to_csv("data/processed/stocks-fundaments.csv", index=False)
-
 
 ### Function to include fundament data into the history dataframe
 def include_fundament(df_history, df_fundaments, kpi_type, column_name):

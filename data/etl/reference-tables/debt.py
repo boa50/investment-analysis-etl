@@ -1,14 +1,12 @@
 from data.etl.utils import load_files
 from utils import clear_table, get_cd_cvm_load, get_years_load
 
-# cd_cvm_load = get_cd_cvm_load()
-cd_cvm_load = [18627, 14443, 19445]
+cd_cvm_load = get_cd_cvm_load(kpi="DEBT")
 years_load = get_years_load()
 
-df = load_files(years_load, files_types_load=["BPP"])
+print(f"Filling reference table for {cd_cvm_load}")
 
-# Banks don't have Debt
-# cd_cvm_load_excluding_banks = list(set(cd_cvm_load).difference([906, 1023]))
+df = load_files(years_load, files_types_load=["BPP"])
 df = clear_table(df, cd_cvm_load)
 
 # print(
@@ -28,10 +26,11 @@ df.to_csv("data/raw/_reference-table-debt.csv", index=False)
 
 
 ### Cash equivalents to calculate the Net Debt
-df = load_files(years_load, files_types_load=["BPA"])
+cd_cvm_load = get_cd_cvm_load(kpi="DEBT-NEG")
 
-# Banks don't have Debt
-# cd_cvm_load_excluding_banks = list(set(cd_cvm_load).difference([906, 1023]))
+print(f"Filling reference table for {cd_cvm_load}")
+
+df = load_files(years_load, files_types_load=["BPA"])
 df = clear_table(df, cd_cvm_load)
 
 # print(

@@ -2,15 +2,12 @@ import pandas as pd
 from data.etl.utils import load_files
 from utils import clear_table, get_cd_cvm_load, get_years_load
 
-# cd_cvm_load = get_cd_cvm_load()
-cd_cvm_load = [2453, 18660]
+cd_cvm_load = get_cd_cvm_load(kpi="EBITDA-NEG")
 years_load = get_years_load()
 
-df = load_files(years_load, files_types_load=["DRE"])
+print(f"Filling reference table for {cd_cvm_load}")
 
-# Banks don't have EBITDA
-# https://investalk.bb.com.br/noticias/quero-aprender/entenda-o-balanco-dos-bancos-e-porque-e-diferente-de-outras-empresas
-# cd_cvm_load = list(set(cd_cvm_load).difference([906, 1023]))
+df = load_files(years_load, files_types_load=["DRE"])
 df = clear_table(df, cd_cvm_load)
 
 

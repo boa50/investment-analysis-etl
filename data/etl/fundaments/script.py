@@ -96,8 +96,6 @@ df_fundaments = pd.concat(
     ]
 )
 
-print(df_fundaments)
-
 df_fundaments = df_fundaments.sort_values(
     by=[
         "KPI",
@@ -107,6 +105,14 @@ df_fundaments = df_fundaments.sort_values(
 )
 
 df_fundaments = df_fundaments.dropna(subset=["VL_CONTA"])
+
+### The code below is to fix some unknown bug with the dates
+df_fundaments["DT_INI_EXERC"] = pd.to_datetime(
+    df_fundaments["DT_INI_EXERC"], format="mixed"
+).dt.date
+df_fundaments["DT_FIM_EXERC"] = pd.to_datetime(
+    df_fundaments["DT_FIM_EXERC"], format="mixed"
+).dt.date
 
 print()
 print("DF FUNDAMENTS")

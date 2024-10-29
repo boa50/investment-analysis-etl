@@ -31,6 +31,10 @@ def get_all_stock_info():
             create_ticker_df(922, "BAZA3", 56058315, 0),
             create_ticker_df(22616, "BPAC3;BPAC5;BPAC11", 7244165568, 4261954360),
             create_ticker_df(20532, "SANB3;SANB4;SANB11", 3818695031, 3679836020),
+            create_ticker_df(2437, "ELET3;ELET5;ELET6", 2027011498, 280088314),
+            create_ticker_df(20010, "EQTL3", 1248075298, 0),
+            create_ticker_df(17329, "EGIE3", 815927740, 0),
+            create_ticker_df(15539, "NEOE3", 1213797248, 0),
         ]
     )
 
@@ -56,10 +60,10 @@ cd_cvm_test = [
     20532,  # Santander
     2453,  # CEMIG
     18660,  # CPFL Energias
-    # 2437,  # Eletrobras
-    # 20010,  # Equatorial Energia
-    # 17329,  # ENGIE
-    # 15539,  # NeoEnergia
+    2437,  # Eletrobras
+    20010,  # Equatorial Energia
+    17329,  # ENGIE
+    15539,  # NeoEnergia
     19445,  # COPASA
     18627,  # SANEPAR
     14443,  # SABESP

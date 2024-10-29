@@ -2,9 +2,10 @@
 from data.etl.utils import load_files
 from utils import clear_table, get_cd_cvm_load, get_years_load
 
-# cd_cvm_load = get_cd_cvm_load()
-cd_cvm_load = [20532, 22616, 922]
+cd_cvm_load = get_cd_cvm_load(kpi="EQUITY")
 years_load = get_years_load()
+
+print(f"Filling reference table for {cd_cvm_load}")
 
 df = load_files(years_load, files_types_load=["BPP"])
 df = clear_table(df, cd_cvm_load)
