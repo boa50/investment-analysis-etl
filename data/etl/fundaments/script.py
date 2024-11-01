@@ -8,6 +8,7 @@ from earnings import load_ebit
 from equity import load_equity
 from roe import load_roe
 from debt import load_total_debt, load_net_debt, load_net_debt_by_ebit
+from revenue import load_net_revenue, load_cagr_revenue_5_years
 
 year_initial = 2011
 year_final = 2024
@@ -45,8 +46,10 @@ df_dre = load_files(years_load, files_types_load=["DRE"])
 df_dre = prepare_dataframe(df_dre, cd_cvm_load)
 
 df_profit = load_profit(df_dre, df_reference_table)
-df_ebit = load_ebit(df_dre, df_reference_table)
 df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
+df_ebit = load_ebit(df_dre, df_reference_table)
+df_net_revenue = load_net_revenue(df_dre, df_reference_table)
+df_cagr_revenue_5_years = load_cagr_revenue_5_years(df_net_revenue)
 
 # Removed the load of the ebitda because each company show the results differently
 # and not all of them have values in the DRE files
@@ -93,6 +96,8 @@ df_fundaments = pd.concat(
         # df_net_debt_by_ebitda,
         df_net_debt_by_ebit,
         df_cagr_profit_5_years,
+        df_net_revenue,
+        df_cagr_revenue_5_years,
     ]
 )
 
