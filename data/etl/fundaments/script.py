@@ -3,7 +3,7 @@ from data.etl.utils import (
     load_files,
     prepare_dataframe,
 )
-from profit import load_profit, load_cagr_profit_5_years
+from profit import load_profit, load_cagr_profit_5_years, load_net_margin
 from earnings import load_ebit
 from equity import load_equity
 from roe import load_roe
@@ -46,10 +46,8 @@ df_dre = load_files(years_load, files_types_load=["DRE"])
 df_dre = prepare_dataframe(df_dre, cd_cvm_load)
 
 df_profit = load_profit(df_dre, df_reference_table)
-df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
 df_ebit = load_ebit(df_dre, df_reference_table)
 df_net_revenue = load_net_revenue(df_dre, df_reference_table)
-df_cagr_revenue_5_years = load_cagr_revenue_5_years(df_net_revenue)
 
 # Removed the load of the ebitda because each company show the results differently
 # and not all of them have values in the DRE files
@@ -82,6 +80,9 @@ del df_bpa
 df_roe = load_roe(df_profit, df_equity)
 # df_net_debt_by_ebitda = load_net_debt_by_ebitda(df_net_debt, df_ebitda)
 df_net_debt_by_ebit = load_net_debt_by_ebit(df_net_debt, df_ebit)
+df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
+df_cagr_revenue_5_years = load_cagr_revenue_5_years(df_net_revenue)
+df_net_margin = load_net_margin(df_profit, df_net_revenue)
 
 df_fundaments = pd.concat(
     [
@@ -98,6 +99,7 @@ df_fundaments = pd.concat(
         df_cagr_profit_5_years,
         df_net_revenue,
         df_cagr_revenue_5_years,
+        df_net_margin,
     ]
 )
 
