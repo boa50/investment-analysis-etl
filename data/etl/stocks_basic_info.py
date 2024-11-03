@@ -46,6 +46,13 @@ def get_all_stock_info():
             create_ticker_df(20036, "AGRO3", 102683444, 0, 2005),
             create_ticker_df(20745, "SLCE3", 443329716, 0, 1977),
             create_ticker_df(26000, "LAND3", 96226962, 0, 2006),
+            create_ticker_df(24627, "BLAU3", 179393939, 0, 1987),
+            create_ticker_df(9342, "PNVL3", 150377481, 0, 1967),
+            create_ticker_df(21431, "HYPE3", 633420823, 0, 2001),
+            create_ticker_df(22608, "PGMN3;PGMN11", 581715639, 0, 1981),
+            create_ticker_df(5258, "RADL3", 1718007200, 0, 1935),
+            create_ticker_df(19305, "BIOM3;BIOM11", 126841481, 0, 2001),
+            create_ticker_df(23507, "OFSA3", 53949006, 0, 1987),
         ]
     )
 
