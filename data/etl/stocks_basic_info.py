@@ -41,6 +41,11 @@ def get_all_stock_info():
             create_ticker_df(24961, "AMBP3", 167041869, 0, 1995),
             create_ticker_df(16861, "CASN3;CASN4", 572078479, 578578081, 1970),
             create_ticker_df(25550, "ORVR3", 82950889, 0, 2009),
+            create_ticker_df(25950, "TTEN3", 498297647, 0, 1995),
+            create_ticker_df(25704, "SOJA3", 135322144, 0, 2009),
+            create_ticker_df(20036, "AGRO3", 102683444, 0, 2005),
+            create_ticker_df(20745, "SLCE3", 443329716, 0, 1977),
+            create_ticker_df(26000, "LAND3", 96226962, 0, 2006),
         ]
     )
 
