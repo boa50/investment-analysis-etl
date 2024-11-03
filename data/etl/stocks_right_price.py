@@ -35,6 +35,6 @@ def calculate_bazin(constant=0.06, n_years=3):
 df_prices = calculate_bazin()
 df_prices = df_prices.rename(columns={"VALUE": "BAZIN"})
 
-print(df_prices.head())
+print(df_prices)
 
 df_prices.to_csv("data/processed/stocks-right-prices.csv", index=False)

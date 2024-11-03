@@ -1,7 +1,7 @@
 from data.etl.utils import load_files
 from utils import clear_table, get_cd_cvm_load, get_years_load
 
-cd_cvm_load = get_cd_cvm_load(kpi="NET-REVENUE")
+cd_cvm_load = get_cd_cvm_load(kpi="NET_REVENUE")
 years_load = get_years_load()
 
 print(f"Filling reference table for {cd_cvm_load}")
