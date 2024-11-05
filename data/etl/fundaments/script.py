@@ -7,7 +7,12 @@ from profit import load_profit, load_cagr_profit_5_years, load_net_margin
 from earnings import load_ebit
 from equity import load_equity
 from roe import load_roe
-from debt import load_total_debt, load_net_debt, load_net_debt_by_ebit
+from debt import (
+    load_total_debt,
+    load_net_debt,
+    load_net_debt_by_ebit,
+    load_net_debt_by_equity,
+)
 from revenue import load_net_revenue, load_cagr_revenue_5_years
 
 year_initial = 2011
@@ -80,6 +85,7 @@ del df_bpa
 df_roe = load_roe(df_profit, df_equity)
 # df_net_debt_by_ebitda = load_net_debt_by_ebitda(df_net_debt, df_ebitda)
 df_net_debt_by_ebit = load_net_debt_by_ebit(df_net_debt, df_ebit)
+df_net_debt_by_equity = load_net_debt_by_equity(df_net_debt, df_equity)
 df_cagr_profit_5_years = load_cagr_profit_5_years(df_profit)
 df_cagr_revenue_5_years = load_cagr_revenue_5_years(df_net_revenue)
 df_net_margin = load_net_margin(df_profit, df_net_revenue)
@@ -100,6 +106,7 @@ df_fundaments = pd.concat(
         df_net_revenue,
         df_cagr_revenue_5_years,
         df_net_margin,
+        df_net_debt_by_equity,
     ]
 )
 
