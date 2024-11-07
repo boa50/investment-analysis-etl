@@ -3,14 +3,14 @@ from os import listdir
 from os.path import isfile, join
 from urllib.request import urlretrieve
 from pathlib import Path
+from datetime import datetime
 
 
-def download_zips(year_initial=2011, year_final=2024):
+def download_zips(year_initial=2011, year_final=datetime.now().year):
     data_path = "data/raw/zips/"
     Path(data_path).mkdir(exist_ok=True)
 
-    years_load = list(range(year_initial, year_final + 1))
-    types_load = ["itr", "dfp"]
+    print(year_final)
 
     def get_filename_and_url(type, year):
         filename = "{}_cia_aberta_{}.zip".format(type, year)
@@ -20,13 +20,21 @@ def download_zips(year_initial=2011, year_final=2024):
 
         return [filename, url]
 
+    def download_file(type, year):
+        [filename, url] = get_filename_and_url(type, year)
+        print("Downloading {} ...".format(filename))
+        urlretrieve(url, join(data_path, filename))
+
+    # Registration data
+    download_file("fca", year_final)
+
+    # KPIs data
+    years_load = list(range(year_initial, year_final + 1))
+    types_load = ["itr", "dfp"]
+
     for year in years_load:
         for type in types_load:
-            [filename, url] = get_filename_and_url(type, year)
-
-            print("Downloading {} ...".format(filename))
-
-            urlretrieve(url, join(data_path, filename))
+            download_file(type, year)
 
 
 def delete_unnecessary_files(delete_zip=None):
@@ -37,6 +45,15 @@ def delete_unnecessary_files(delete_zip=None):
 
     patterns_to_exclude = ["_2", "_DFC_", "_DMPL_", "_DRA_", "_DVA_", "_parecer_"]
 
+    # FCA files to exclude
+    files = [
+        f
+        for f in all_csv
+        if (("fca_cia_aberta_" in f) and ("fca_cia_aberta_valor_mobiliario_" not in f))
+    ]
+    files_to_exclude.extend(files)
+
+    # # KPIs files to exclude
     for pattern in patterns_to_exclude:
         pattern = "_cia_aberta" + pattern
         files = [f for f in all_csv if pattern in f]
