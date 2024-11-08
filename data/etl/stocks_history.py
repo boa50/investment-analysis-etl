@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
 df_prices = pd.read_csv("data/processed/stocks-prices.csv", parse_dates=["DATE"])
@@ -77,6 +78,7 @@ for ticker in df_prices["TICKER"].unique():
 df_history = df_history.dropna(subset=["TICKER"])
 df_history["CD_CVM"] = df_history["CD_CVM"].astype(int)
 
+
 ### Calculating the P/L
 kpi_type = "PROFIT"
 column_name = "PROFIT"
@@ -105,11 +107,20 @@ df_dividends_rolling = (
 df_dividends_rolling = df_dividends_rolling.reset_index()
 df_dividends_rolling = df_dividends_rolling.rename(columns={"VALUE": "Dividends_1y"})
 
+# Giving 30 days margin for not paying dividends on the same date of previous year
+df_dividends_rolling["Dividends_1y"] = (
+    df_dividends_rolling.replace(0, np.nan)
+    .groupby("TICKER")["Dividends_1y"]
+    .ffill(limit=30)
+    .fillna(0)
+)
+
 df_history = pd.merge(
     df_history, df_dividends_rolling, how="left", on=["TICKER", "DATE"]
 )
 
 df_history["DIVIDEND_YIELD"] = df_history["Dividends_1y"] / df_history["PRICE"]
+
 
 ### Calculating the Dividend Payout
 df_history["DIVIDEND_PAYOUT"] = df_history["Dividends_1y"] / df_history["LPA"]
