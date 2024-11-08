@@ -35,6 +35,25 @@ def include_fundament(df_history, df_fundaments, kpi_type, column_name):
         fundament_columns
     ].ffill()
 
+    last_fundament_date = df_fundaments_filtered[
+        df_fundaments_filtered["DT_FIM_EXERC"] <= df_history["DATE"].min()
+    ]["DT_FIM_EXERC"].max()
+
+    df_fundaments_filtered = df_fundaments_filtered[
+        df_fundaments_filtered["DT_FIM_EXERC"] == last_fundament_date
+    ][["CD_CVM", "VL_CONTA", "VL_CONTA_ROLLING_YEAR"]]
+
+    df_history = df_history.merge(df_fundaments_filtered, how="left", on="CD_CVM")
+
+    df_history = df_history.fillna(
+        {
+            fundament_columns[0]: df_history["VL_CONTA"],
+            fundament_columns[1]: df_history["VL_CONTA_ROLLING_YEAR"],
+        }
+    )
+
+    df_history = df_history.drop(["VL_CONTA", "VL_CONTA_ROLLING_YEAR"], axis=1)
+
     return df_history
 
 

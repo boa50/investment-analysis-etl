@@ -146,6 +146,8 @@ def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
         )
 
         if show_trend:
+            print(df[value_column])
+
             _plot_trend(
                 x=df["DATE"],
                 y=df[value_column],

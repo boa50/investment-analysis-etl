@@ -21,5 +21,5 @@ def unzip_data():
         zip_ref.extractall("")
 
 
-# zip_data()
+zip_data()
 # unzip_data()
