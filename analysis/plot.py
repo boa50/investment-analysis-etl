@@ -74,11 +74,15 @@ def _get_chart_props_history(ticker, kpi, is_segemento=True):
 
 
 def _plot_trend(x, y, label, color):
+    # Giving more weight to data with dates closer to today
+    days_diff = (x.max() - x.min()).days
+    sample_weight = days_diff - (x.max() - x).dt.days
+
     x_train = x.values.astype(float).reshape(-1, 1)
     y_train = y.values.reshape(-1, 1)
 
     model = linear_model.LinearRegression()
-    model.fit(x_train, y_train)
+    model.fit(x_train, y_train, sample_weight=sample_weight)
 
     y_pred = model.predict(x_train)
 
