@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import info
+from sklearn import linear_model
 
 _df_history = pd.read_csv("../data/processed/stocks-history.csv", parse_dates=["DATE"])
 _df_fundaments = pd.read_csv(
@@ -72,7 +73,30 @@ def _get_chart_props_history(ticker, kpi, is_segemento=True):
     return df, value_column, date_x_ticks
 
 
-def plot_historical_kpi(tickers, kpi, show_segment=True):
+def _plot_trend(x, y, label, color):
+    x_train = x.values.astype(float).reshape(-1, 1)
+    y_train = y.values.reshape(-1, 1)
+
+    model = linear_model.LinearRegression()
+    model.fit(x_train, y_train)
+
+    y_pred = model.predict(x_train)
+
+    print(label)
+    print("m: " + str(model.coef_[0][0]))
+    print("Last Value: " + str(y_pred[-1]))
+
+    plt.plot(
+        x,
+        y_pred,
+        label=label,
+        linestyle="--",
+        linewidth=0.5,
+        color=color,
+    )
+
+
+def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
     plt.figure(figsize=(10, 5))
     is_df_fundaments = kpi in _df_fundaments["KPI"].unique()
 
@@ -86,13 +110,23 @@ def plot_historical_kpi(tickers, kpi, show_segment=True):
                 tickers[0], kpi, is_segemento=True
             )
 
+        segment_color = "grey"
+
         plt.plot(
             df_segmento["DATE"],
             df_segmento[value_column],
             label="Segment",
-            linestyle="--",
-            color="grey",
+            linestyle="-.",
+            color=segment_color,
         )
+
+        if show_trend:
+            _plot_trend(
+                x=df_segmento["DATE"],
+                y=df_segmento[value_column],
+                label="Segment trend",
+                color=segment_color,
+            )
 
     for ticker in tickers:
         if is_df_fundaments:
@@ -104,12 +138,20 @@ def plot_historical_kpi(tickers, kpi, show_segment=True):
                 ticker, kpi, is_segemento=False
             )
 
-        plt.plot(
+        p = plt.plot(
             df["DATE"],
             df[value_column],
             label=ticker,
             linestyle="-",
         )
+
+        if show_trend:
+            _plot_trend(
+                x=df["DATE"],
+                y=df[value_column],
+                label=ticker + " trend",
+                color=p[0].get_color(),
+            )
 
     plt.title(kpi)
     plt.xlabel("Date")
