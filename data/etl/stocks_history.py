@@ -36,13 +36,19 @@ def include_fundament(df_history, df_fundaments, kpi_type, column_name):
         fundament_columns
     ].ffill()
 
-    last_fundament_date = df_fundaments_filtered[
-        df_fundaments_filtered["DT_FIM_EXERC"] <= df_history["DATE"].min()
-    ]["DT_FIM_EXERC"].max()
+    last_fundament_date = df_history.groupby("CD_CVM")["DATE"].min().reset_index()
 
+    df_fundaments_filtered = df_fundaments_filtered.merge(
+        last_fundament_date, how="left", on="CD_CVM"
+    )
     df_fundaments_filtered = df_fundaments_filtered[
-        df_fundaments_filtered["DT_FIM_EXERC"] == last_fundament_date
-    ][["CD_CVM", "VL_CONTA", "VL_CONTA_ROLLING_YEAR"]]
+        df_fundaments_filtered["DT_FIM_EXERC"] <= df_fundaments_filtered["DATE"]
+    ]
+    df_fundaments_filtered = (
+        df_fundaments_filtered.groupby("CD_CVM")[["VL_CONTA", "VL_CONTA_ROLLING_YEAR"]]
+        .last()
+        .reset_index()
+    )
 
     df_history = df_history.merge(df_fundaments_filtered, how="left", on="CD_CVM")
 
