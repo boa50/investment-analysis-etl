@@ -74,7 +74,7 @@ def _get_kpi_props_history(ticker, kpi, is_segemento=True):
     return df, value_column, date_x_ticks
 
 
-def get_kpi_info(ticker, kpi, is_segmento=False):
+def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[]):
     if kpi in _df_fundaments["KPI"].unique():
         df, value_column, date_x_ticks = _get_kpi_props_fundaments(
             ticker, kpi, is_segemento=is_segmento
@@ -84,17 +84,33 @@ def get_kpi_info(ticker, kpi, is_segmento=False):
             ticker, kpi, is_segemento=is_segmento
         )
 
+    risk_calculation_values = df[value_column].copy()
+
     kpi_volatility = df[value_column].std()
 
-    running_max = np.maximum.accumulate(df[value_column])
-    drawdowns = (df[value_column] - running_max) / running_max
+    drawdown_kpi_multiplier = 1
+
+    if kpi in ["NET_DEBT_BY_EBIT", "NET_DEBT_BY_EQUITY"]:
+        risk_calculation_values *= -1
+
+        if len(thresholds) == 1:
+            risk_calculation_values = np.minimum(
+                risk_calculation_values, -thresholds[0]
+            )
+
+        drawdown_kpi_multiplier = -1
+
+    running_max = np.maximum.accumulate(risk_calculation_values)
+    drawdowns = (
+        (risk_calculation_values - running_max) / running_max
+    ) * drawdown_kpi_multiplier
     max_dd = np.min(drawdowns)
     pain_index = np.mean(drawdowns)
 
     return {
-        "df": df,
-        "value_column": value_column,
-        "date_x_ticks": date_x_ticks,
+        "dates": df["DATE"],
+        "values": df[value_column],
+        "x_ticks": df["DATE"][::date_x_ticks],
         "volatility": kpi_volatility,
         "max_drawdown": max_dd,
         "pain_index": pain_index,

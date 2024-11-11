@@ -42,17 +42,17 @@ def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
 
     if show_segment:
         kpi_info = measures.get_kpi_info(tickers[0], kpi, is_segemento=True)
-        df_segmento, value_column, date_x_ticks = (
-            kpi_info["df"],
-            kpi_info["value_column"],
-            kpi_info["date_x_ticks"],
+        dates, values, x_ticks = (
+            kpi_info["dates"],
+            kpi_info["values"],
+            kpi_info["x_ticks"],
         )
 
         segment_color = "grey"
 
         plt.plot(
-            df_segmento["DATE"],
-            df_segmento[value_column],
+            dates,
+            values,
             label="Segment",
             linestyle="-.",
             color=segment_color,
@@ -60,31 +60,31 @@ def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
 
         if show_trend:
             _plot_trend(
-                x=df_segmento["DATE"],
-                y=df_segmento[value_column],
+                x=dates,
+                y=values,
                 label="Segment trend",
                 color=segment_color,
             )
 
     for ticker in tickers:
         kpi_info = measures.get_kpi_info(ticker, kpi)
-        df, value_column, date_x_ticks = (
-            kpi_info["df"],
-            kpi_info["value_column"],
-            kpi_info["date_x_ticks"],
+        dates, values, x_ticks = (
+            kpi_info["dates"],
+            kpi_info["values"],
+            kpi_info["x_ticks"],
         )
 
         p = plt.plot(
-            df["DATE"],
-            df[value_column],
+            dates,
+            values,
             label=ticker,
             linestyle="-",
         )
 
         if show_trend:
             _plot_trend(
-                x=df["DATE"],
-                y=df[value_column],
+                x=dates,
+                y=values,
                 label=ticker + " trend",
                 color=p[0].get_color(),
             )
@@ -92,7 +92,7 @@ def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
     plt.title(kpi)
     plt.xlabel("Date")
     plt.ylabel(kpi)
-    plt.xticks(df["DATE"][::date_x_ticks], rotation=0)
+    plt.xticks(x_ticks, rotation=0)
     plt.legend()
 
     plt.tight_layout()
