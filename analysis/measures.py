@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import info
 
 _df_basic_info = pd.read_csv("../data/processed/stocks-basic-info.csv")
@@ -83,13 +84,20 @@ def get_kpi_info(ticker, kpi, is_segmento=False):
             ticker, kpi, is_segemento=is_segmento
         )
 
-    kpi_variance = df[value_column].var()
+    kpi_volatility = df[value_column].std()
+
+    running_max = np.maximum.accumulate(df[value_column])
+    drawdowns = (df[value_column] - running_max) / running_max
+    max_dd = np.min(drawdowns)
+    pain_index = np.mean(drawdowns)
 
     return {
         "df": df,
         "value_column": value_column,
         "date_x_ticks": date_x_ticks,
-        "variance": kpi_variance,
+        "volatility": kpi_volatility,
+        "max_drawdown": max_dd,
+        "pain_index": pain_index,
     }
 
 
