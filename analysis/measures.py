@@ -83,7 +83,14 @@ def get_kpi_info(ticker, kpi, is_segmento=False):
             ticker, kpi, is_segemento=is_segmento
         )
 
-    return {"df": df, "value_column": value_column, "date_x_ticks": date_x_ticks}
+    kpi_variance = df[value_column].var()
+
+    return {
+        "df": df,
+        "value_column": value_column,
+        "date_x_ticks": date_x_ticks,
+        "variance": kpi_variance,
+    }
 
 
 def get_latest_values_by_ticker(ticker):
