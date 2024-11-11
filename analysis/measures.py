@@ -10,6 +10,82 @@ _df_fundaments = pd.read_csv(
 _df_right_prices = pd.read_csv("../data/processed/stocks-right-prices.csv")
 
 
+def _get_kpi_props_fundaments_segmento(ticker, df_kpi, value_column):
+    segmento = info.get_segmento_by_ticker(ticker)
+    cd_cvm_segmento = info.get_companies_by_segmento(segmento=segmento)["CD_CVM"].values
+
+    df_segmento = df_kpi[df_kpi["CD_CVM"].isin(cd_cvm_segmento)]
+    df_segmento = df_segmento[["DATE", value_column]]
+    df_segmento = df_segmento.groupby("DATE").mean().reset_index()
+    df_segmento = df_segmento.sort_values(by="DATE")
+
+    return df_segmento
+
+
+def _get_kpi_props_fundaments(ticker, kpi, is_segemento=True):
+    cd_cvm = info.get_cd_cvm_by_ticker(ticker)
+    first_date = _df_fundaments["DT_FIM_EXERC"].max() - pd.DateOffset(years=10)
+
+    df_kpi = _df_fundaments[
+        (_df_fundaments["KPI"] == kpi) & (_df_fundaments["DT_FIM_EXERC"] >= first_date)
+    ]
+
+    df_kpi = df_kpi.rename(columns={"DT_FIM_EXERC": "DATE"})
+
+    value_column = (
+        "VL_CONTA"
+        if df_kpi["VL_CONTA_ROLLING_YEAR"].max() == -1
+        else "VL_CONTA_ROLLING_YEAR"
+    )
+
+    if is_segemento:
+        df = _get_kpi_props_fundaments_segmento(ticker, df_kpi, value_column)
+    else:
+        df = df_kpi[df_kpi["CD_CVM"] == cd_cvm]
+
+    date_x_ticks = 10
+
+    return df, value_column, date_x_ticks
+
+
+def _get_kpi_props_history_segmento(ticker, kpi):
+    segmento = info.get_segmento_by_ticker(ticker)
+    tickers_segmento = info.get_companies_by_segmento(segmento=segmento)[
+        "MAIN_TICKER"
+    ].values
+    df_segmento = _df_history[_df_history["TICKER"].isin(tickers_segmento)]
+    df_segmento = df_segmento[["DATE", kpi]]
+    df_segmento = df_segmento.groupby("DATE").mean().reset_index()
+    df_segmento = df_segmento.sort_values(by="DATE")
+
+    return df_segmento
+
+
+def _get_kpi_props_history(ticker, kpi, is_segemento=True):
+    if is_segemento:
+        df = _get_kpi_props_history_segmento(ticker, kpi)
+    else:
+        df = _df_history[_df_history["TICKER"] == ticker]
+
+    value_column = kpi
+    date_x_ticks = 100
+
+    return df, value_column, date_x_ticks
+
+
+def get_kpi_info(ticker, kpi, is_segmento=False):
+    if kpi in _df_fundaments["KPI"].unique():
+        df, value_column, date_x_ticks = _get_kpi_props_fundaments(
+            ticker, kpi, is_segemento=is_segmento
+        )
+    else:
+        df, value_column, date_x_ticks = _get_kpi_props_history(
+            ticker, kpi, is_segemento=is_segmento
+        )
+
+    return {"df": df, "value_column": value_column, "date_x_ticks": date_x_ticks}
+
+
 def get_latest_values_by_ticker(ticker):
     df_history_tmp = _df_history[_df_history["TICKER"] == ticker]
     cd_cvm = df_history_tmp.iloc[0]["CD_CVM"]
