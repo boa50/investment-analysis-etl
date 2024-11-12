@@ -74,6 +74,26 @@ def _get_kpi_props_history(ticker, kpi, is_segemento=True):
     return df, value_column, date_x_ticks
 
 
+def _get_drawdowns(
+    risk_calculation_values, drawdown_kpi_multiplier=1, threshold=np.inf
+):
+    risk_values = np.minimum(
+        risk_calculation_values * drawdown_kpi_multiplier,
+        threshold * drawdown_kpi_multiplier,
+    )
+    running_max = np.maximum.accumulate(risk_values)
+    drawdowns = ((risk_values - running_max) / running_max) * drawdown_kpi_multiplier
+
+    return drawdowns
+
+
+def _get_risk_measures(drawdowns):
+    max_dd = np.min(drawdowns)
+    pain_index = np.mean(drawdowns)
+
+    return {"max_dd": max_dd, "pain_index": pain_index}
+
+
 def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[]):
     if kpi in _df_fundaments["KPI"].unique():
         df, value_column, date_x_ticks = _get_kpi_props_fundaments(
@@ -85,35 +105,36 @@ def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[]):
         )
 
     risk_calculation_values = df[value_column].copy()
-
     kpi_volatility = df[value_column].std()
-
-    drawdown_kpi_multiplier = 1
+    drawdowns = None
 
     if kpi in ["NET_DEBT_BY_EBIT", "NET_DEBT_BY_EQUITY"]:
-        risk_calculation_values *= -1
+        threshold = thresholds[0] if len(thresholds) == 1 else -np.inf
+        drawdowns = _get_drawdowns(
+            risk_calculation_values, drawdown_kpi_multiplier=-1, threshold=threshold
+        )
+    elif (kpi in ["DIVIDEND_PAYOUT"]) and (len(thresholds) > 1):
+        drawdowns1 = _get_drawdowns(
+            risk_calculation_values, drawdown_kpi_multiplier=1, threshold=thresholds[0]
+        )
+        drawdowns2 = _get_drawdowns(
+            risk_calculation_values, drawdown_kpi_multiplier=-1, threshold=thresholds[1]
+        )
 
-        if len(thresholds) == 1:
-            risk_calculation_values = np.minimum(
-                risk_calculation_values, -thresholds[0]
-            )
+        drawdowns = np.minimum(drawdowns1, drawdowns2)
 
-        drawdown_kpi_multiplier = -1
+    if drawdowns is None:
+        drawdowns = _get_drawdowns(risk_calculation_values)
 
-    running_max = np.maximum.accumulate(risk_calculation_values)
-    drawdowns = (
-        (risk_calculation_values - running_max) / running_max
-    ) * drawdown_kpi_multiplier
-    max_dd = np.min(drawdowns)
-    pain_index = np.mean(drawdowns)
+    risk_measures = _get_risk_measures(drawdowns)
 
     return {
         "dates": df["DATE"],
         "values": df[value_column],
         "x_ticks": df["DATE"][::date_x_ticks],
         "volatility": kpi_volatility,
-        "max_drawdown": max_dd,
-        "pain_index": pain_index,
+        "max_drawdown": risk_measures["max_dd"],
+        "pain_index": risk_measures["pain_index"],
     }
 
 
