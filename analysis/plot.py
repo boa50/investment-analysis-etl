@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import info
 import measures
-from sklearn import linear_model
 
 _df_fundaments = pd.read_csv(
     "../data/processed/stocks-fundaments.csv",
@@ -11,25 +10,11 @@ _df_fundaments = pd.read_csv(
 
 
 def _plot_trend(x, y, label, color):
-    # Giving more weight to data with dates closer to today
-    days_diff = (x.max() - x.min()).days
-    sample_weight = days_diff - (x.max() - x).dt.days
-
-    x_train = x.values.astype(float).reshape(-1, 1)
-    y_train = y.values.reshape(-1, 1)
-
-    model = linear_model.LinearRegression()
-    model.fit(x_train, y_train, sample_weight=sample_weight)
-
-    y_pred = model.predict(x_train)
-
-    print(label)
-    print("m: " + str(model.coef_[0][0]))
-    print("Last Value: " + str(y_pred[-1]))
+    trend = measures.get_trend(x, y)
 
     plt.plot(
         x,
-        y_pred,
+        trend,
         label=label,
         linestyle="--",
         linewidth=0.5,

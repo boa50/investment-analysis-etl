@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
+from sklearn import linear_model
 import info
+import utils
 
 _df_basic_info = pd.read_csv("../data/processed/stocks-basic-info.csv")
 _df_history = pd.read_csv("../data/processed/stocks-history.csv", parse_dates=["DATE"])
@@ -136,6 +138,27 @@ def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[]):
         "max_drawdown": risk_measures["max_dd"],
         "pain_index": risk_measures["pain_index"],
     }
+
+
+def get_trend(x, y, is_time_weighted=True):
+    # Giving more weight to data with dates closer to today
+    if is_time_weighted:
+        sample_weight = utils.get_date_weights(dates=x)
+    else:
+        sample_weight = None
+
+    x_train = x.values.astype(float).reshape(-1, 1)
+    y_train = y.values.reshape(-1, 1)
+
+    model = linear_model.LinearRegression()
+    model.fit(x_train, y_train, sample_weight=sample_weight)
+
+    trend = model.predict(x_train)
+
+    print("m: " + str(model.coef_[0][0]))
+    print("Last Value: " + str(trend[-1]))
+
+    return trend
 
 
 def get_latest_values_by_ticker(ticker):
