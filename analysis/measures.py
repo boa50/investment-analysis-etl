@@ -86,17 +86,17 @@ def _get_drawdowns(
     running_max = np.maximum.accumulate(risk_values)
     drawdowns = ((risk_values - running_max) / running_max) * drawdown_kpi_multiplier
 
-    return drawdowns
+    return drawdowns.fillna(0)
 
 
-def _get_risk_measures(drawdowns):
+def _get_risk_measures(drawdowns, weights=None):
     max_dd = np.min(drawdowns)
-    pain_index = np.mean(drawdowns)
+    pain_index = np.average(drawdowns, weights=weights)
 
     return {"max_dd": max_dd, "pain_index": pain_index}
 
 
-def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[]):
+def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[], is_time_weighted=False):
     if kpi in _df_fundaments["KPI"].unique():
         df, value_column, date_x_ticks = _get_kpi_props_fundaments(
             ticker, kpi, is_segemento=is_segmento
@@ -105,6 +105,8 @@ def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[]):
         df, value_column, date_x_ticks = _get_kpi_props_history(
             ticker, kpi, is_segemento=is_segmento
         )
+
+    weights = utils.get_date_weights(dates=df["DATE"]) if is_time_weighted else None
 
     risk_calculation_values = df[value_column].copy()
     kpi_volatility = df[value_column].std()
@@ -128,7 +130,7 @@ def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[]):
     if drawdowns is None:
         drawdowns = _get_drawdowns(risk_calculation_values)
 
-    risk_measures = _get_risk_measures(drawdowns)
+    risk_measures = _get_risk_measures(drawdowns, weights=weights)
 
     return {
         "dates": df["DATE"],
