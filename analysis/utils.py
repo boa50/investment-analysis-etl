@@ -14,11 +14,11 @@ def get_ipca_weights(dates):
 
     weights = last_ipca_value / df_ipca["VALUE"]
 
-    return weights.reset_index(drop=True)
+    return weights.reset_index(drop=True).values
 
 
 def get_date_weights(dates):
     days_diff = (dates.max() - dates.min()).days
     weights = (days_diff - (dates.max() - dates).dt.days) / days_diff
 
-    return weights.reset_index(drop=True)
+    return weights.reset_index(drop=True).values

@@ -96,7 +96,14 @@ def _get_risk_measures(drawdowns, weights=None):
     return {"max_dd": max_dd, "pain_index": pain_index}
 
 
-def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[], is_time_weighted=False):
+def get_kpi_info(
+    ticker,
+    kpi,
+    is_segmento=False,
+    thresholds=[],
+    is_time_weighted=False,
+    is_inflation_weighted=False,
+):
     if kpi in _df_fundaments["KPI"].unique():
         df, value_column, date_x_ticks = _get_kpi_props_fundaments(
             ticker, kpi, is_segemento=is_segmento
@@ -107,6 +114,13 @@ def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[], is_time_weighted
         )
 
     weights = utils.get_date_weights(dates=df["DATE"]) if is_time_weighted else None
+
+    if is_inflation_weighted and (kpi in ["PROFIT", "NET_REVENUE", "EBIT", "EQUITY"]):
+        inflation_weights = utils.get_ipca_weights(dates=df["DATE"])
+        if weights is None:
+            weights = inflation_weights
+        else:
+            weights *= inflation_weights
 
     risk_calculation_values = df[value_column].copy()
     kpi_volatility = df[value_column].std()
@@ -134,7 +148,7 @@ def get_kpi_info(ticker, kpi, is_segmento=False, thresholds=[], is_time_weighted
 
     return {
         "dates": df["DATE"],
-        "values": df[value_column],
+        "values": df[value_column] * (weights if weights is not None else 1),
         "x_ticks": df["DATE"][::date_x_ticks],
         "volatility": kpi_volatility,
         "max_drawdown": risk_measures["max_dd"],

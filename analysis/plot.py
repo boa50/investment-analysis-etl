@@ -1,12 +1,5 @@
-import pandas as pd
 import matplotlib.pyplot as plt
-import info
 import measures
-
-_df_fundaments = pd.read_csv(
-    "../data/processed/stocks-fundaments.csv",
-    parse_dates=["DT_INI_EXERC", "DT_FIM_EXERC"],
-)
 
 
 def _plot_trend(x, y, label, color):
@@ -22,11 +15,18 @@ def _plot_trend(x, y, label, color):
     )
 
 
-def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
+def plot_historical_kpi(
+    tickers, kpi, show_segment=True, show_trend=False, is_inflation_weighted=False
+):
     plt.figure(figsize=(10, 5))
 
     if show_segment:
-        kpi_info = measures.get_kpi_info(tickers[0], kpi, is_segemento=True)
+        kpi_info = measures.get_kpi_info(
+            tickers[0],
+            kpi,
+            is_segemento=True,
+            is_inflation_weighted=is_inflation_weighted,
+        )
         dates, values, x_ticks = (
             kpi_info["dates"],
             kpi_info["values"],
@@ -52,7 +52,9 @@ def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
             )
 
     for ticker in tickers:
-        kpi_info = measures.get_kpi_info(ticker, kpi)
+        kpi_info = measures.get_kpi_info(
+            ticker, kpi, is_inflation_weighted=is_inflation_weighted
+        )
         dates, values, x_ticks = (
             kpi_info["dates"],
             kpi_info["values"],
@@ -84,41 +86,39 @@ def plot_historical_kpi(tickers, kpi, show_segment=True, show_trend=False):
     plt.show()
 
 
-def plot_equity_evolution(ticker):
-    cd_cvm = info.get_cd_cvm_by_ticker(ticker)
-    first_date = _df_fundaments["DT_FIM_EXERC"].max() - pd.DateOffset(years=10)
+def plot_equity_evolution(ticker, is_inflation_weighted=False):
+    def get_kpi_data(kpi):
+        kpi_info = measures.get_kpi_info(
+            ticker, kpi, is_inflation_weighted=is_inflation_weighted
+        )
 
-    df_ticker = _df_fundaments[
-        (_df_fundaments["CD_CVM"] == cd_cvm)
-        & (_df_fundaments["DT_FIM_EXERC"] >= first_date)
-    ]
-    df_ticker = df_ticker.rename(columns={"DT_FIM_EXERC": "DATE"})
+        return kpi_info["dates"], kpi_info["values"], kpi_info["x_ticks"]
 
-    df_net_revenue = df_ticker[df_ticker["KPI"] == "NET_REVENUE"]
-    df_profit = df_ticker[df_ticker["KPI"] == "PROFIT"]
-    df_equity = df_ticker[df_ticker["KPI"] == "EQUITY"]
+    net_revenue_dates, net_revenue_values, x_ticks = get_kpi_data("NET_REVENUE")
+    profit_dates, profit_values, _ = get_kpi_data("PROFIT")
+    equity_dates, equity_values, _ = get_kpi_data("EQUITY")
 
     plt.figure(figsize=(10, 5))
 
     plt.plot(
-        df_net_revenue["DATE"],
-        df_net_revenue["VL_CONTA_ROLLING_YEAR"],
+        net_revenue_dates,
+        net_revenue_values,
         label="Net Revenue",
         linestyle="-",
         linewidth=2.5,
         color="coral",
     )
     plt.plot(
-        df_profit["DATE"],
-        df_profit["VL_CONTA_ROLLING_YEAR"],
+        profit_dates,
+        profit_values,
         label="Profit",
         linestyle="-",
         linewidth=2.5,
         color="limegreen",
     )
     plt.bar(
-        df_equity["DATE"],
-        df_equity["VL_CONTA"],
+        equity_dates,
+        equity_values,
         label="Equity",
         width=70,
         color="steelblue",
@@ -127,7 +127,7 @@ def plot_equity_evolution(ticker):
     plt.title("Equity Evolution - " + ticker)
     plt.xlabel("Date")
     plt.ylabel("Value")
-    plt.xticks(df_net_revenue["DATE"][::10], rotation=0)
+    plt.xticks(x_ticks, rotation=0)
     plt.legend()
 
     plt.tight_layout()
