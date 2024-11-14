@@ -25,6 +25,7 @@ def _process_raw_file(filepath):
 
 
 def download_ipca_file():
+    # Page to extract the url below https://dados.gov.br/dados/conjuntos-dados/ia-indice-nacional-de-precos-ao-consumidor-amplo-ipca
     url = "https://apisidra.ibge.gov.br/values/t/1737/n1/all/v/all/p/all/d/v63%202,v69%202,v2266%2013,v2263%202,v2264%202,v2265%202?formato=json"
 
     filepath = "data/raw/ipca.json"
