@@ -88,7 +88,7 @@ df = pd.read_csv(
     "data/raw/cad_cia_aberta.csv",
     encoding="ISO-8859-1",
     sep=";",
-    usecols=["CNPJ_CIA", "CD_CVM", "DENOM_COMERC", "SIT"],
+    usecols=["CNPJ_CIA", "CD_CVM", "DENOM_COMERC", "DENOM_SOCIAL", "SIT"],
 )
 
 df = df[(df["SIT"] == "ATIVO")]
@@ -141,7 +141,11 @@ df_sector = pd.read_csv("data/processed/b3-sectors.csv")
 
 df = df.merge(df_sector, how="left", on="CODIGO")
 
-df = df.drop("CODIGO", axis=1)
+df["DENOM_COMERC"] = df["DENOM_COMERC"].fillna(df["DENOM_SOCIAL"])
+
+df = df.rename(columns={"DENOM_COMERC": "NOME"})
+
+df = df.drop(["CODIGO", "DENOM_SOCIAL"], axis=1)
 
 df = df.sort_values(by=["SETOR", "SUBSETOR", "SEGMENTO", "CD_CVM"])
 
