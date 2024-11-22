@@ -36,4 +36,4 @@ def get_cd_cvm_by_ticker(ticker):
 def get_companies_by_segmento(segmento):
     df_tmp = df_basic_info[df_basic_info["SEGMENTO"] == segmento].copy()
     df_tmp["MAIN_TICKER"] = df_tmp["TICKERS"].apply(get_main_ticker)
-    return df_tmp[["CD_CVM", "DENOM_COMERC", "MAIN_TICKER", "FOUNDATION"]]
+    return df_tmp[["CD_CVM", "NOME", "MAIN_TICKER", "FOUNDATION"]]

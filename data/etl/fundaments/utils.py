@@ -50,7 +50,7 @@ def get_bp_kpi_info(kpi, df_bp, df_reference_table, grouping=False, verbose=Fals
     return df_kpi
 
 
-def get_cgar(df_base, n_years=5):
+def get_cagr(df_base, n_years=5):
     df_kpi = df_base.copy()
     df_kpi = df_kpi.drop(["KPI", "VL_CONTA"], axis=1)
     df_kpi["DT_FIM_EXERC_MINUS_ONE_YEAR"] = df_kpi["DT_FIM_EXERC"] - pd.DateOffset(

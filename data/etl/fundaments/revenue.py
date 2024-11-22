@@ -1,4 +1,4 @@
-from utils import get_dre_kpi_info, get_cgar
+from utils import get_dre_kpi_info, get_cagr
 
 
 def load_net_revenue(df_dre, df_reference_table, verbose=False):
@@ -6,8 +6,8 @@ def load_net_revenue(df_dre, df_reference_table, verbose=False):
 
 
 def load_cagr_revenue_5_years(df_net_revenue, verbose=False):
-    df_kpi = get_cgar(df_net_revenue)
-    df_kpi["KPI"] = "CGAR_5_YEARS_REVENUE"
+    df_kpi = get_cagr(df_net_revenue)
+    df_kpi["KPI"] = "CAGR_5_YEARS_REVENUE"
 
     if verbose:
         print()

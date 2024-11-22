@@ -1,5 +1,5 @@
 import pandas as pd
-from utils import get_dre_kpi_info, get_cgar
+from utils import get_dre_kpi_info, get_cagr
 
 
 def load_profit(df_dre, df_reference_table, verbose=False):
@@ -7,8 +7,8 @@ def load_profit(df_dre, df_reference_table, verbose=False):
 
 
 def load_cagr_profit_5_years(df_profit, verbose=False):
-    df_kpi = get_cgar(df_profit)
-    df_kpi["KPI"] = "CGAR_5_YEARS_PROFIT"
+    df_kpi = get_cagr(df_profit)
+    df_kpi["KPI"] = "CAGR_5_YEARS_PROFIT"
 
     if verbose:
         print()
