@@ -68,7 +68,7 @@ def delete_unnecessary_files(delete_zip=None):
 
         Path(filepath).unlink(missing_ok=True)
 
-    if delete_zip != None:
+    if delete_zip is not None:
         print("Deleting {} ...".format(delete_zip))
 
         Path(delete_zip).unlink(missing_ok=True)
