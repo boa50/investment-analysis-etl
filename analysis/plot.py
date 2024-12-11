@@ -24,7 +24,7 @@ def plot_historical_kpi(
         kpi_info = measures.get_kpi_info(
             tickers[0],
             kpi,
-            is_segemento=True,
+            is_segmento=True,
             is_inflation_weighted=is_inflation_weighted,
         )
         dates, values, x_ticks = (
@@ -32,6 +32,8 @@ def plot_historical_kpi(
             kpi_info["values"],
             kpi_info["x_ticks"],
         )
+
+        print("Segment Last Value: " + str(kpi_info["values"].iloc[-1]))
 
         segment_color = "grey"
 
@@ -60,6 +62,8 @@ def plot_historical_kpi(
             kpi_info["values"],
             kpi_info["x_ticks"],
         )
+
+        print(ticker + " Last Value: " + str(kpi_info["values"].iloc[-1]))
 
         p = plt.plot(
             dates,

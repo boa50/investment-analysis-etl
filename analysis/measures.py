@@ -76,6 +76,13 @@ def _get_kpi_props_history(ticker, kpi, is_segemento=True):
     return df, value_column, date_x_ticks
 
 
+def _get_kpi_props(ticker, kpi, is_segemento=False):
+    if kpi in _df_fundaments["KPI"].unique():
+        return _get_kpi_props_fundaments(ticker, kpi, is_segemento=is_segemento)
+    else:
+        return _get_kpi_props_history(ticker, kpi, is_segemento=is_segemento)
+
+
 def _get_drawdowns(
     risk_calculation_values, drawdown_kpi_multiplier=1, threshold=np.inf
 ):
@@ -104,14 +111,11 @@ def get_kpi_info(
     is_time_weighted=False,
     is_inflation_weighted=False,
 ):
-    if kpi in _df_fundaments["KPI"].unique():
-        df, value_column, date_x_ticks = _get_kpi_props_fundaments(
-            ticker, kpi, is_segemento=is_segmento
-        )
-    else:
-        df, value_column, date_x_ticks = _get_kpi_props_history(
-            ticker, kpi, is_segemento=is_segmento
-        )
+    print("Getting values for " + ticker)
+
+    df, value_column, date_x_ticks = _get_kpi_props(
+        ticker, kpi, is_segemento=is_segmento
+    )
 
     weights = utils.get_date_weights(dates=df["DATE"]) if is_time_weighted else None
 
@@ -140,6 +144,21 @@ def get_kpi_info(
         )
 
         drawdowns = np.minimum(drawdowns1, drawdowns2)
+    elif kpi in ["PL", "PVP"]:
+        ticker_shape = risk_calculation_values.shape[0]
+
+        df_segment, value_column_seg, _ = _get_kpi_props(ticker, kpi, is_segemento=True)
+        trend_line = get_trend(
+            df["DATE"],
+            df_segment[value_column_seg][-ticker_shape:],
+            is_time_weighted=False,
+        )
+
+        drawdowns = _get_drawdowns(
+            risk_calculation_values + trend_line.reshape(-1),
+            drawdown_kpi_multiplier=-1,
+            threshold=-np.inf,
+        )
 
     if drawdowns is None:
         drawdowns = _get_drawdowns(risk_calculation_values)
@@ -172,7 +191,7 @@ def get_trend(x, y, is_time_weighted=True):
     trend = model.predict(x_train)
 
     print("m: " + str(model.coef_[0][0]))
-    print("Last Value: " + str(trend[-1]))
+    # print("Trend Last Value: " + str(trend[-1]))
 
     return trend
 
