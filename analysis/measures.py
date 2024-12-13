@@ -154,6 +154,10 @@ def get_kpi_info(
             is_time_weighted=False,
         )
 
+        risk_calculation_values = risk_calculation_values.where(
+            risk_calculation_values >= 0
+        ).bfill()
+
         drawdowns = _get_drawdowns(
             risk_calculation_values + trend_line.reshape(-1),
             drawdown_kpi_multiplier=-1,
