@@ -23,7 +23,10 @@ def download_zips(year_initial=2011, year_final=datetime.now().year):
     def download_file(type, year):
         [filename, url] = get_filename_and_url(type, year)
         print("Downloading {} ...".format(filename))
-        urlretrieve(url, join(data_path, filename))
+        try:
+            urlretrieve(url, join(data_path, filename))
+        except:
+            print("Error downloading {} ...".format(filename))
 
     # Registration data
     download_file("fca", year_final)
@@ -99,4 +102,4 @@ def extract_zips(delete_zips=False):
 
 
 # download_zips()
-# extract_zips(delete_zips=True)
+extract_zips(delete_zips=True)
