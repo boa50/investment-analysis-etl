@@ -19,6 +19,7 @@ def create_table(table_name):
         "Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)
     )
     
+# create_table("stocks-basic-info")
 # create_table("stocks-fundaments")
 # create_table("stocks-history")
-# create_table("stocks-basic-info")
+# create_table("stocks-right-prices")

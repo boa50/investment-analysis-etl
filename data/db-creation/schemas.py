@@ -9,7 +9,7 @@ def get_schema(table_name):
                 bigquery.SchemaField("DT_YEAR", "STRING", mode="REQUIRED"),
                 bigquery.SchemaField("KPI", "STRING", mode="REQUIRED"),
                 bigquery.SchemaField("VALUE", "BIGDECIMAL", mode="NULLABLE"),
-                bigquery.SchemaField("VALUE_ROLLING_YEAR", "BIGDECIMAL", mode="NULLABLE"),
+                bigquery.SchemaField("VALUE_ROLLING_YEAR", "BIGDECIMAL", mode="NULLABLE")
             ]
     elif table_name == "stocks-history":
         return [
@@ -20,10 +20,8 @@ def get_schema(table_name):
                 bigquery.SchemaField("PRICE_PROFIT", "BIGDECIMAL", mode="NULLABLE"),
                 bigquery.SchemaField("DIVIDEND_YIELD", "BIGDECIMAL", mode="NULLABLE"),
                 bigquery.SchemaField("DIVIDEND_PAYOUT", "BIGDECIMAL", mode="NULLABLE"),
-                bigquery.SchemaField("PRICE_EQUITY", "BIGDECIMAL", mode="NULLABLE"),
+                bigquery.SchemaField("PRICE_EQUITY", "BIGDECIMAL", mode="NULLABLE")
             ]
-        
-        NOME,CD_CVM,NUM_ORDINARIAS,NUM_PREFERENCIAIS,NUM_TOTAL,FOUNDATION,TICKERS,GOVERNANCE_LEVEL,SETOR,SUBSETOR,SEGMENTO
     elif table_name == "stocks-basic-info":
         return [
                 bigquery.SchemaField("CD_CVM", "STRING", mode="REQUIRED"),
@@ -37,6 +35,12 @@ def get_schema(table_name):
                 bigquery.SchemaField("SECTOR", "STRING", mode="NULLABLE"),
                 bigquery.SchemaField("SUBSECTOR", "STRING", mode="NULLABLE"),
                 bigquery.SchemaField("SEGMENT", "STRING", mode="NULLABLE")
+            ]
+    elif table_name == "stocks-right-prices":
+        return [
+                bigquery.SchemaField("CD_CVM", "STRING", mode="REQUIRED"),
+                bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
+                bigquery.SchemaField("BAZIN", "BIGDECIMAL", mode="NULLABLE")
             ]
     else: 
         return []
