@@ -45,9 +45,17 @@ def load_data(table_name, df):
 
 # load_data(table_name=table_name, df=df)
 
-# HISTORY
+### HISTORY
 # df = pd.read_csv("data/processed/stocks-history.csv")
 # df.columns = ["DT_EVENT", "CD_CVM", "TICKER", "PRICE", "PRICE_PROFIT", "DIVIDEND_YIELD", "DIVIDEND_PAYOUT", "PRICE_EQUITY"]
 # table_name = "stocks-history"
+
+# load_data(table_name=table_name, df=df)
+
+### BASIC INFO
+# df = pd.read_csv("data/processed/stocks-basic-info.csv")
+# df.columns = ["NAME", "CD_CVM", "NUM_COMMON", "NUM_PREFERENTIAL", "NUM_TOTAL", "FOUNDATION", "TICKERS", "GOVERNANCE_LEVEL", "SECTOR", "SUBSECTOR", "SEGMENT"]
+# df = df[["CD_CVM", "NAME", "TICKERS", "NUM_COMMON", "NUM_PREFERENTIAL", "NUM_TOTAL", "FOUNDATION", "GOVERNANCE_LEVEL", "SECTOR", "SUBSECTOR", "SEGMENT"]]
+# table_name = "stocks-basic-info"
 
 # load_data(table_name=table_name, df=df)

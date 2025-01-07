@@ -22,5 +22,21 @@ def get_schema(table_name):
                 bigquery.SchemaField("DIVIDEND_PAYOUT", "BIGDECIMAL", mode="NULLABLE"),
                 bigquery.SchemaField("PRICE_EQUITY", "BIGDECIMAL", mode="NULLABLE"),
             ]
+        
+        NOME,CD_CVM,NUM_ORDINARIAS,NUM_PREFERENCIAIS,NUM_TOTAL,FOUNDATION,TICKERS,GOVERNANCE_LEVEL,SETOR,SUBSETOR,SEGMENTO
+    elif table_name == "stocks-basic-info":
+        return [
+                bigquery.SchemaField("CD_CVM", "STRING", mode="REQUIRED"),
+                bigquery.SchemaField("NAME", "STRING", mode="NULLABLE"),
+                bigquery.SchemaField("TICKERS", "STRING", mode="REQUIRED"),
+                bigquery.SchemaField("NUM_COMMON", "INTEGER", mode="NULLABLE"),
+                bigquery.SchemaField("NUM_PREFERENTIAL", "INTEGER", mode="NULLABLE"),
+                bigquery.SchemaField("NUM_TOTAL", "INTEGER", mode="REQUIRED"),
+                bigquery.SchemaField("FOUNDATION", "STRING", mode="NULLABLE"),
+                bigquery.SchemaField("GOVERNANCE_LEVEL", "STRING", mode="NULLABLE"),
+                bigquery.SchemaField("SECTOR", "STRING", mode="NULLABLE"),
+                bigquery.SchemaField("SUBSECTOR", "STRING", mode="NULLABLE"),
+                bigquery.SchemaField("SEGMENT", "STRING", mode="NULLABLE")
+            ]
     else: 
         return []
