@@ -102,4 +102,4 @@ def extract_zips(delete_zips=False):
 
 
 # download_zips()
-extract_zips(delete_zips=True)
+# extract_zips(delete_zips=True)
