@@ -34,13 +34,20 @@ def load_data(table_name, df):
 
     Path(tmp_file_path).unlink(missing_ok=True)
 
+### FUNDAMENTS
+# df = pd.read_csv("data/processed/stocks-fundaments.csv")
 
-df = pd.read_csv("data/processed/stocks-fundaments.csv")
+# df = df.replace([np.inf, -np.inf], np.nan)
+# df.columns = ["CD_CVM", "DT_START", "DT_END", "KPI", "VALUE", "DT_YEAR", "VALUE_ROLLING_YEAR"]
+# df = df[["CD_CVM", "DT_START", "DT_END", "DT_YEAR", "KPI", "VALUE", "VALUE_ROLLING_YEAR"]]
 
-df = df.replace([np.inf, -np.inf], np.nan)
-df.columns = ["CD_CVM", "DT_START", "DT_END", "KPI", "VALUE", "DT_YEAR", "VALUE_ROLLING_YEAR"]
-df = df[["CD_CVM", "DT_START", "DT_END", "DT_YEAR", "KPI", "VALUE", "VALUE_ROLLING_YEAR"]]
+# table_name = "stocks-fundaments"
 
-table_name = "stocks-fundaments"
+# load_data(table_name=table_name, df=df)
 
-load_data(table_name=table_name, df=df)
+# HISTORY
+# df = pd.read_csv("data/processed/stocks-history.csv")
+# df.columns = ["DT_EVENT", "CD_CVM", "TICKER", "PRICE", "PRICE_PROFIT", "DIVIDEND_YIELD", "DIVIDEND_PAYOUT", "PRICE_EQUITY"]
+# table_name = "stocks-history"
+
+# load_data(table_name=table_name, df=df)

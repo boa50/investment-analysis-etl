@@ -7,9 +7,11 @@ client = bigquery.Client()
 # Set the dataset_id
 dataset_id = "lazy-investor-db.app_dataset"
 
-def create_table(table_name, schema):
+def create_table(table_name):
     # TODO(developer): Set table_id to the ID of the table to create.
     table_id = dataset_id + "." + table_name
+    
+    schema = get_schema(table_name=table_name)
 
     table = bigquery.Table(table_id, schema=schema)
     table = client.create_table(table)  # Make an API request.
@@ -17,6 +19,5 @@ def create_table(table_name, schema):
         "Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)
     )
     
-table_name = "stocks-fundaments"
-schema = get_schema(table_name=table_name)
-create_table(table_name=table_name, schema=schema)
+# create_table("stocks-fundaments")
+# create_table("stocks-history")
