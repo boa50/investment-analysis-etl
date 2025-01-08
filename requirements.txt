@@ -11,6 +11,7 @@ click==8.1.7
 comm==0.2.2
 contourpy==1.1.1
 cycler==0.12.1
+db-dtypes==1.3.1
 debugpy==1.8.6
 decorator==5.1.1
 exceptiongroup==1.2.2
@@ -20,6 +21,7 @@ fonttools==4.54.1
 frozendict==2.4.4
 google-api-core==2.24.0
 google-auth==2.37.0
+google-auth-oauthlib==1.2.1
 google-cloud-bigquery==3.27.0
 google-cloud-core==2.4.1
 google-crc32c==1.5.0
@@ -45,9 +47,11 @@ matplotlib-inline==0.1.7
 multitasking==0.0.11
 nest-asyncio==1.6.0
 numpy==1.24.4
+oauthlib==3.2.2
 outcome==1.3.0.post0
 packaging==24.1
 pandas==2.0.3
+pandas-gbq==0.26.1
 parso==0.8.4
 peewee==3.17.6
 pexpect==4.9.0
@@ -60,10 +64,12 @@ protobuf==5.29.2
 psutil==6.0.0
 ptyprocess==0.7.0
 pure_eval==0.2.3
+pyarrow==17.0.0
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pydantic==2.9.2
 pydantic_core==2.23.4
+pydata-google-auth==1.8.2
 Pygments==2.18.0
 pyparsing==3.1.4
 PySocks==1.7.1
@@ -72,6 +78,7 @@ python-dotenv==1.0.1
 pytz==2024.2
 pyzmq==26.2.0
 requests==2.32.3
+requests-oauthlib==2.0.0
 rsa==4.9
 scikit-learn==1.3.2
 scipy==1.10.1
