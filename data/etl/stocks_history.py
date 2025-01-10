@@ -149,7 +149,10 @@ df_history = df_history.drop(["NET_WORTH", "NET_WORTH_ROLLING_YEAR", "VP"], axis
 df_history = df_history.drop(["NUM_TOTAL"], axis=1)
 
 # Keeping only weekly data
-df_history = df_history.drop_duplicates(subset=df_history.columns[2:])
+df_history = df_history.groupby([df_history["DATE"].dt.to_period("W-SUN"), 
+                                 df_history["CD_CVM"], 
+                                 df_history["TICKER"]]
+                                ).head(1)
 
 df_history.sort_values(by=["TICKER", "DATE"])
 
