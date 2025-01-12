@@ -42,5 +42,10 @@ def get_schema(table_name):
                 bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
                 bigquery.SchemaField("BAZIN", "BIGDECIMAL", mode="NULLABLE")
             ]
+    elif table_name == "ipca":
+        return [
+                bigquery.SchemaField("DATE", "DATE", mode="REQUIRED"),
+                bigquery.SchemaField("VALUE", "DECIMAL", mode="REQUIRED")
+            ]
     else: 
         return []

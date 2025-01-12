@@ -23,3 +23,4 @@ def create_table(table_name):
 # create_table("stocks-fundaments")
 # create_table("stocks-history")
 # create_table("stocks-right-prices")
+# create_table("ipca")

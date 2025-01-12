@@ -67,3 +67,9 @@ def load_data(table_name, df):
 # table_name = "stocks-right-prices"
 
 # load_data(table_name=table_name, df=df)
+
+### RIGHT PRICES
+# df = pd.read_csv("data/processed/ipca.csv", parse_dates=["DATE"])
+# table_name = "ipca"
+
+# load_data(table_name=table_name, df=df)
