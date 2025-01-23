@@ -1,0 +1,13 @@
+.venv
+
+data/raw/zips/*.zip
+data/raw/*.csv
+data/raw/*.csv#
+data/raw/*.json
+data/processed/*.csv
+data/processed/*.csv#
+
+data/etl/driver/*
+!data/etl/driver/README.md
+
+__pycache__
