@@ -1,5 +1,6 @@
 from google.cloud import bigquery
 from schemas import get_schema
+import os
 import data.db as db
 
 db.get_db_credentials()
@@ -8,7 +9,7 @@ db.get_db_credentials()
 client = bigquery.Client()
 
 # Set the dataset_id
-dataset_id = "lazy-investor-db.app_dataset"
+dataset_id = f"{os.environ.get('DB_PROJECT_ID')}.{os.environ.get('DB_DATASET_ID')}"
 
 
 def create_table(table_name):

@@ -51,11 +51,11 @@ def get_schema(table_name):
     elif table_name == "stocks-ratings":
         return [
             bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
-            bigquery.SchemaField("VALUE", "DECIMAL", mode="REQUIRED"),
-            bigquery.SchemaField("DEBT", "DECIMAL", mode="REQUIRED"),
-            bigquery.SchemaField("EFFICIENCY", "DECIMAL", mode="REQUIRED"),
-            bigquery.SchemaField("GROWTH", "DECIMAL", mode="REQUIRED"),
-            bigquery.SchemaField("OVERALL", "DECIMAL", mode="REQUIRED"),
+            bigquery.SchemaField("VALUE", "BIGDECIMAL", mode="REQUIRED"),
+            bigquery.SchemaField("DEBT", "BIGDECIMAL", mode="REQUIRED"),
+            bigquery.SchemaField("EFFICIENCY", "BIGDECIMAL", mode="REQUIRED"),
+            bigquery.SchemaField("GROWTH", "BIGDECIMAL", mode="REQUIRED"),
+            bigquery.SchemaField("OVERALL", "BIGDECIMAL", mode="REQUIRED"),
         ]
     else:
         return []

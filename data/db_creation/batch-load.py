@@ -4,6 +4,7 @@ from schemas import get_schema
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import os
 import data.db as db
 
 db.get_db_credentials()
@@ -11,7 +12,7 @@ db.get_db_credentials()
 # Construct a BigQuery client object.
 client = bigquery.Client()
 
-dataset_id = "lazy-investor-db.app_dataset"
+dataset_id = f"{os.environ.get('DB_PROJECT_ID')}.{os.environ.get('DB_DATASET_ID')}"
 
 
 def load_data(table_name, df):
