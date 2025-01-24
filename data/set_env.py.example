@@ -1,0 +1,7 @@
+import os
+
+
+def set_env():
+    os.environ["DB_PROJECT_ID"] = ""
+    os.environ["DB_DATASET_ID"] = ""
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""

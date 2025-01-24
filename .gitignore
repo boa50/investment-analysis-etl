@@ -10,4 +10,8 @@ data/processed/*.csv#
 data/etl/driver/*
 !data/etl/driver/README.md
 
+data/service-account.json
+data/set_env.py
+
+*.pkl
 __pycache__
