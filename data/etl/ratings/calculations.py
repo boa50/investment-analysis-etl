@@ -2,7 +2,6 @@ import math
 import numpy as np
 import pandas as pd
 from sklearn import linear_model
-# import datasource
 
 
 def calculate_kpi_rating(
@@ -82,8 +81,7 @@ def calculate_kpi_rating(
 def calculate_kpi_pain_index(
     df: pd.DataFrame,
     kpi: str,
-    df_segment: pd.DataFrame = None,
-    # ticker: str = None,
+    df_segment: pd.DataFrame,
     thresholds: list = [],
     weights: list = None,
 ):
@@ -106,11 +104,6 @@ def calculate_kpi_pain_index(
         drawdowns = np.minimum(drawdowns1, drawdowns2)
     elif kpi in ["PL", "PVP"]:
         ticker_shape = values.shape[0]
-
-        # if df_segment is None:
-        #     df_segment = datasource.get_kpi_values(
-        #         ticker=ticker, kpi=kpi, is_from_segment=True
-        #     )
 
         trend_line, _ = calculate_trend(df["DATE"], df_segment["VALUE"][-ticker_shape:])
 

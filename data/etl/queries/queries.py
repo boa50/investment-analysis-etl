@@ -1,5 +1,7 @@
 import data.db as db
 
+db.get_db_credentials()
+
 
 def get_ipca():
     sql = f"""
