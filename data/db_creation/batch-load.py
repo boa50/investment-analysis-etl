@@ -59,6 +59,7 @@ def load_data(table_name, df):
 #         "SECTOR",
 #         "SUBSECTOR",
 #         "SEGMENT",
+#         "WEB_PAGE",
 #     ]
 # ]
 

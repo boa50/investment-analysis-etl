@@ -39,6 +39,7 @@ def get_schema(table_name):
             bigquery.SchemaField("SECTOR", "STRING", mode="NULLABLE"),
             bigquery.SchemaField("SUBSECTOR", "STRING", mode="NULLABLE"),
             bigquery.SchemaField("SEGMENT", "STRING", mode="NULLABLE"),
+            bigquery.SchemaField("WEB_PAGE", "STRING", mode="NULLABLE"),
         ]
     elif table_name == "stocks-right-prices":
         return [
