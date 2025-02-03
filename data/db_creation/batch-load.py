@@ -25,7 +25,7 @@ def load_data(table_name, df):
         source_format=bigquery.SourceFormat.CSV,
     )
 
-    tmp_file_path = "data/db-creation/tmp.csv"
+    tmp_file_path = "data/db_creation/tmp.csv"
     df.to_csv(tmp_file_path, index=False)
 
     with open(tmp_file_path, "rb") as source_file:
@@ -43,11 +43,26 @@ def load_data(table_name, df):
 
 ### BASIC INFO
 # df = pd.read_csv("data/processed/stocks-basic-info.csv")
-# df.columns = ["NAME", "CD_CVM", "NUM_COMMON", "NUM_PREFERENTIAL", "NUM_TOTAL", "FOUNDATION", "TICKERS", "GOVERNANCE_LEVEL", "SECTOR", "SUBSECTOR", "SEGMENT"]
-# df = df[["CD_CVM", "NAME", "TICKERS", "NUM_COMMON", "NUM_PREFERENTIAL", "NUM_TOTAL", "FOUNDATION", "GOVERNANCE_LEVEL", "SECTOR", "SUBSECTOR", "SEGMENT"]]
-# table_name = "stocks-basic-info"
+# df = df[
+#     [
+#         "CD_CVM",
+#         "NAME",
+#         "TICKERS",
+#         "NUM_COMMON",
+#         "NUM_PREFERENTIAL",
+#         "NUM_TOTAL",
+#         "AVAILABLE_COMMON",
+#         "AVAILABLE_PREFERENTIAL",
+#         "AVAILABLE_TOTAL",
+#         "FOUNDATION",
+#         "GOVERNANCE_LEVEL",
+#         "SECTOR",
+#         "SUBSECTOR",
+#         "SEGMENT",
+#     ]
+# ]
 
-# load_data(table_name=table_name, df=df)
+# load_data(table_name="stocks-basic-info", df=df)
 
 
 ### FUNDAMENTS

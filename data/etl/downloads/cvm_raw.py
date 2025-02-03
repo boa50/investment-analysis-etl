@@ -25,7 +25,7 @@ def download_zips(year_initial=2011, year_final=datetime.now().year):
         print("Downloading {} ...".format(filename))
         try:
             urlretrieve(url, join(data_path, filename))
-        except:
+        except Exception:
             print("Error downloading {} ...".format(filename))
 
     # Registration data
