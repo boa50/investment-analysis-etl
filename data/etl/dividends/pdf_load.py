@@ -44,4 +44,4 @@ def load_dividends_from_pdf():
 
     df_all_dividends = clean_df_dividends(df_all_dividends)
 
-    return df_all_dividends
+    return df_all_dividends.sort_values(by=["TICKER", "DATE"])
