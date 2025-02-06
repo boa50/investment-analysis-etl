@@ -1,6 +1,7 @@
 .venv
 
-data/raw/zips/*.zip
+data/raw/zips
+data/raw/dividends
 data/raw/*.csv
 data/raw/*.csv#
 data/raw/*.json
