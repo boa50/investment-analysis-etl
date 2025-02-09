@@ -9,15 +9,20 @@ def get_doc_dividends(doc_path):
     for page in doc:
         tabs = page.find_tables()
         if tabs.tables:
+            df_version = pd.DataFrame(tabs[0].extract())
+
             df = pd.DataFrame(tabs[1].extract())
             df = df.iloc[2:]
             df = df[[0, 1, 6]]
             df.columns = ["TICKER", "VALUE", "DATE"]
 
-    return df
+            df["DOC_DATE"] = df_version.iat[5, 0]
+            df["DOC_VERSION"] = df_version.iat[7, 1]
+
+            return df
 
 
-def clean_df_dividends(df):
+def clean_df_dividends(df: pd.DataFrame):
     new_df = df.copy()
 
     new_df = new_df.replace("\n", "", regex=True)
@@ -26,7 +31,17 @@ def clean_df_dividends(df):
     new_df["VALUE"] = new_df["VALUE"].str.replace(",", ".").astype(float)
     new_df["DATE"] = pd.to_datetime(new_df["DATE"], dayfirst=True)
 
-    new_df = new_df[["TICKER", "DATE", "VALUE"]].reset_index(drop=True)
+    docs_groups = (
+        new_df[["DOC_DATE", "DOC_VERSION"]].groupby("DOC_DATE").max().reset_index()
+    )
+
+    new_df = new_df.merge(docs_groups, how="inner", on=["DOC_DATE", "DOC_VERSION"])
+
+    new_df = (
+        new_df[["TICKER", "DATE", "VALUE"]]
+        .sort_values(by=["TICKER", "DATE"])
+        .reset_index(drop=True)
+    )
 
     return new_df
 
@@ -44,4 +59,4 @@ def load_dividends_from_pdf():
 
     df_all_dividends = clean_df_dividends(df_all_dividends)
 
-    return df_all_dividends.sort_values(by=["TICKER", "DATE"])
+    return df_all_dividends
