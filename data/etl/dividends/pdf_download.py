@@ -1,5 +1,5 @@
 import pandas as pd
-from os.path import join
+import os
 import urllib.request
 
 ### Defining urls request agent
@@ -13,7 +13,7 @@ def download_file(filename, url):
 
     print("Downloading {} ...".format(filename))
     try:
-        urllib.request.urlretrieve(url, join(output_path, filename))
+        urllib.request.urlretrieve(url, os.path.join(output_path, filename))
     except Exception as error:
         print("Error downloading {} ... {}".format(filename, error))
 
@@ -33,5 +33,11 @@ df["FILE_NAME"] = df["Codigo_CVM"].astype(str) + "_" + df["Data_Referencia"] + "
 ### For testing purposes
 df = df[df["Codigo_CVM"] == 1023]
 
+already_downloaded_files = os.listdir("data/raw/dividends/")
+
 for index, row in df.iterrows():
-    download_file(filename=row["FILE_NAME"], url=row["Link_Download"])
+    file_name = row["FILE_NAME"]
+
+    if file_name not in already_downloaded_files:
+        print(f"Downloading {file_name}")
+        download_file(filename=file_name, url=row["Link_Download"])
