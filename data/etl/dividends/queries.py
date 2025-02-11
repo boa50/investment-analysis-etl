@@ -23,13 +23,17 @@ def get_available_tickers():
             FROM {get_table_full_name("stocks-history")}
         """
 
-    return execute_query(sql)
+    available_tickers = execute_query(sql)["TICKER"].values
+
+    return available_tickers
 
 
-def get_available_cd_cvm():
+def get_available_cds_cvm():
     sql = f"""
             SELECT CD_CVM
             FROM {get_table_full_name("stocks-basic-info")}
         """
 
-    return execute_query(sql)
+    available_cds_cvm = execute_query(sql)["CD_CVM"].values
+
+    return available_cds_cvm
