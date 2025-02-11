@@ -48,6 +48,7 @@ def clean_df_dividends(df: pd.DataFrame):
 
 def load_dividends_from_pdf():
     df_all_dividends = pd.DataFrame()
+    df_docs_processed = pd.DataFrame()
 
     docs_path = "data/raw/dividends/"
     docs = os.listdir(docs_path)
@@ -56,7 +57,16 @@ def load_dividends_from_pdf():
         doc_path = docs_path + doc
         df_doc_dividends = get_doc_dividends(doc_path=doc_path)
         df_all_dividends = pd.concat([df_all_dividends, df_doc_dividends])
+        df_docs_processed = pd.concat(
+            [df_docs_processed, pd.DataFrame(data=[doc], columns=["FILE_NAME"])]
+        )
 
     df_all_dividends = clean_df_dividends(df_all_dividends)
 
-    return df_all_dividends
+    df_all_dividends.to_csv("data/processed/stocks-dividends.csv", index=False)
+    df_docs_processed.to_csv(
+        "data/processed/stocks_dividends_docs_processed.csv", index=False
+    )
+
+
+load_dividends_from_pdf()

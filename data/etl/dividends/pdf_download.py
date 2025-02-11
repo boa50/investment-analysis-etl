@@ -54,7 +54,7 @@ def create_file_names(df):
     return df["FILE_NAME"]
 
 
-def process_ipe_file(document_year):
+def process_ipe_file(document_year, already_processed_files, available_cds_cvm):
     file_name = f"ipe_cia_aberta_{document_year}.csv"
 
     print()
@@ -81,16 +81,12 @@ def process_ipe_file(document_year):
 
     df["FILE_NAME"] = create_file_names(df)
 
-    available_cds_cvm = [int(n) for n in queries.get_available_cds_cvm()]
-
     df = df[df["Codigo_CVM"].isin(available_cds_cvm)]
-
-    already_downloaded_files = os.listdir("data/raw/dividends/")
 
     for index, row in df.iterrows():
         file_name = row["FILE_NAME"]
 
-        if file_name not in already_downloaded_files:
+        if file_name not in already_processed_files:
             print(f"Downloading {file_name}")
             download_file(filename=file_name, url=row["Link_Download"])
 
@@ -101,5 +97,20 @@ docs = [f for f in docs if "ipe_cia_aberta_" in f]
 documents_years = [f[-8:-4] for f in docs]
 documents_years.sort()
 
+available_cds_cvm = [int(n) for n in queries.get_available_cds_cvm()]
+
+already_downloaded_files = os.listdir("data/raw/dividends/")
+already_processed_files = pd.read_csv(
+    "data/processed/stocks_dividends_docs_processed.csv"
+)["FILE_NAME"].values
+
+already_processed_files = list(
+    set([*already_downloaded_files, *already_processed_files])
+)
+
 for year in documents_years:
-    process_ipe_file(document_year=year)
+    process_ipe_file(
+        document_year=year,
+        already_processed_files=already_processed_files,
+        available_cds_cvm=available_cds_cvm,
+    )
