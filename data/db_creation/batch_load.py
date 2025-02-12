@@ -1,6 +1,6 @@
 # Based on https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv#loading_csv_data_into_a_table
 from google.cloud import bigquery
-from schemas import get_schema
+from data.db_creation.schemas import get_schema
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -15,7 +15,7 @@ client = bigquery.Client()
 dataset_id = f"{os.environ.get('DB_PROJECT_ID')}.{os.environ.get('DB_DATASET_ID')}"
 
 
-def load_data(table_name, df):
+def load_data(table_name: str, df: pd.DataFrame):
     # TODO(developer): Set table_id to the ID of the table to create.
     table_id = dataset_id + "." + table_name
 

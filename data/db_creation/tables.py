@@ -31,3 +31,5 @@ def create_table(table_name):
 # create_table("stocks-right-prices")
 # create_table("stocks-ratings")
 # create_table("ipca")
+# create_table("stocks-dividends")
+# create_table("stocks-dividends-docs-processed")

@@ -65,7 +65,7 @@ def load_dividends_from_pdf():
 
     df_all_dividends.to_csv("data/processed/stocks-dividends.csv", index=False)
     df_docs_processed.to_csv(
-        "data/processed/stocks_dividends_docs_processed.csv", index=False
+        "data/processed/stocks-dividends-docs-processed.csv", index=False
     )
 
 

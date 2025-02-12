@@ -61,5 +61,13 @@ def get_schema(table_name):
             bigquery.SchemaField("GROWTH", "BIGDECIMAL", mode="REQUIRED"),
             bigquery.SchemaField("OVERALL", "BIGDECIMAL", mode="REQUIRED"),
         ]
+    elif table_name == "stocks-dividends":
+        return [
+            bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("DATE", "DATE", mode="REQUIRED"),
+            bigquery.SchemaField("VALUE", "DECIMAL", mode="REQUIRED"),
+        ]
+    elif table_name == "stocks-dividends-docs-processed":
+        return [bigquery.SchemaField("FILE_NAME", "STRING", mode="REQUIRED")]
     else:
         return []
