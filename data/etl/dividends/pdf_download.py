@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import urllib.request
 import queries
+from pathlib import Path
 
 ### Defining urls request agent
 opener = urllib.request.build_opener()
@@ -9,7 +10,7 @@ opener.addheaders = [("User-agent", "Mozilla/5.0")]
 urllib.request.install_opener(opener)
 
 
-def download_file(filename, url):
+def download_file(filename: str, url: str):
     output_path = "data/raw/dividends/"
 
     print("Downloading {} ...".format(filename))
@@ -19,7 +20,7 @@ def download_file(filename, url):
         print("Error downloading {} ... {}".format(filename, error))
 
 
-def create_file_names(df):
+def create_file_names(df: pd.DataFrame):
     protocol_text = "&numProtocolo="
     sequence_text = "&numSequencia="
     version_text = "&numVersao="
@@ -54,7 +55,9 @@ def create_file_names(df):
     return df["FILE_NAME"]
 
 
-def process_ipe_file(document_year, already_processed_files, available_cds_cvm):
+def process_ipe_file(
+    document_year: str, already_processed_files: list, available_cds_cvm: list
+):
     file_name = f"ipe_cia_aberta_{document_year}.csv"
 
     print()
@@ -87,9 +90,10 @@ def process_ipe_file(document_year, already_processed_files, available_cds_cvm):
         file_name = row["FILE_NAME"]
 
         if file_name not in already_processed_files:
-            print(f"Downloading {file_name}")
             download_file(filename=file_name, url=row["Link_Download"])
 
+
+Path("data/raw/dividends").mkdir(exist_ok=True)
 
 docs_path = "data/raw/"
 docs = os.listdir(docs_path)
@@ -100,9 +104,7 @@ documents_years.sort()
 available_cds_cvm = [int(n) for n in queries.get_available_cds_cvm()]
 
 already_downloaded_files = os.listdir("data/raw/dividends/")
-already_processed_files = pd.read_csv(
-    "data/processed/stocks_dividends_docs_processed.csv"
-)["FILE_NAME"].values
+already_processed_files = queries.get_already_processed_files()
 
 already_processed_files = list(
     set([*already_downloaded_files, *already_processed_files])

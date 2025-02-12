@@ -37,3 +37,35 @@ def get_available_cds_cvm():
     available_cds_cvm = execute_query(sql)["CD_CVM"].values
 
     return available_cds_cvm
+
+
+def get_already_processed_files():
+    sql = f"""
+            SELECT FILE_NAME
+            FROM {get_table_full_name("stocks-dividends-docs-processed")}
+        """
+
+    already_processed_files = execute_query(sql)["FILE_NAME"].values
+
+    return already_processed_files
+
+
+def get_stocks_splits():
+    sql = f"""
+            SELECT *
+            FROM {get_table_full_name("stocks-splits")}
+        """
+
+    return execute_query(sql)
+
+
+def get_cd_cvm_by_ticker(ticker):
+    sql = f"""
+            SELECT CD_CVM 
+            FROM {get_table_full_name("stocks-basic-info")} 
+            WHERE TICKERS LIKE '%{ticker.upper()}%'
+        """
+
+    cd_cvm = execute_query(sql).iloc[0]["CD_CVM"]
+
+    return cd_cvm

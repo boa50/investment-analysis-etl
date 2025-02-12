@@ -100,8 +100,13 @@ def load_data(table_name: str, df: pd.DataFrame):
 
 # load_data(table_name=table_name, df=df)
 
-### RIGHT PRICES
+### IPCA
 # df = pd.read_csv("data/processed/ipca.csv", parse_dates=["DATE"])
 # table_name = "ipca"
 
 # load_data(table_name=table_name, df=df)
+
+### STOCKS SPLITS
+# df = pd.read_csv("data/processed/stocks-splits.csv", parse_dates=["DATE"])
+
+# load_data(table_name="stocks-splits", df=df)
