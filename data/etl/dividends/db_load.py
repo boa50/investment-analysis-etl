@@ -1,10 +1,19 @@
 from data.db_creation import batch_load
+import queries
 import pandas as pd
 from pathlib import Path
 import os
 
 ### DIVIDENDS
 df = pd.read_csv("data/processed/stocks-dividends.csv")
+
+df_docs_control = df[["TICKER", "DOC_DATE", "DOC_VERSION"]].drop_duplicates()
+
+for _, row in df_docs_control.iterrows():
+    queries.delete_outdated_dividends(
+        ticker=row["TICKER"], doc_date=row["DOC_DATE"], doc_version=row["DOC_VERSION"]
+    )
+
 batch_load.load_data(table_name="stocks-dividends", df=df)
 Path("data/processed/stocks-dividends.csv").unlink(missing_ok=True)
 

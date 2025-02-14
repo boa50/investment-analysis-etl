@@ -1,3 +1,4 @@
+from google.cloud import bigquery
 import pandas_gbq as pdgbq
 import data.db as db
 import os
@@ -69,3 +70,21 @@ def get_cd_cvm_by_ticker(ticker):
     cd_cvm = execute_query(sql).iloc[0]["CD_CVM"]
 
     return cd_cvm
+
+
+def delete_outdated_dividends(ticker: str, doc_date: str, doc_version: int):
+    sql = f"""
+            DELETE
+            FROM {get_table_full_name("stocks-dividends")} 
+            WHERE TICKER = '{ticker.upper()}'
+                AND DOC_DATE = '{doc_date}'
+                AND VERSION < {doc_version}
+        """
+
+    client = bigquery.Client()
+
+    query = client.query(sql)
+
+    query.result()
+
+    print("Deleted outdated dividends")
