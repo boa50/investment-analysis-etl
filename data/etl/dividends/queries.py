@@ -88,3 +88,13 @@ def delete_outdated_dividends(ticker: str, doc_date: str, doc_version: int):
     query.result()
 
     print("Deleted outdated dividends")
+
+
+def get_all_custom_dividends():
+    sql = f"""
+            SELECT *
+            FROM {get_table_full_name("stocks-dividends")}
+            WHERE VERSION = -1
+        """
+
+    return execute_query(sql)
