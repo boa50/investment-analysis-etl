@@ -47,6 +47,7 @@ df_dividends_columns = ["TICKER", "DATE", "VALUE", "DOC_DATE", "VERSION"]
 
 df = pd.DataFrame(
     data=[
+        create_custom_dividend_row("BBAS3", "2024-02-29", 0.00741179),
         create_custom_dividend_row("BBAS3", "2024-08-30", 0.00270692),
         create_custom_dividend_row("BBAS3", "2024-08-30", 0.00560564),
     ],
