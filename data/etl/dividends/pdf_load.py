@@ -31,7 +31,9 @@ def clean_df_dividends(df: pd.DataFrame):
     new_df["TICKER"] = new_df["TICKER"].str[2:6] + new_df["TICKER"].str[-1]
     new_df["VALUE"] = new_df["VALUE"].str.replace(",", ".").astype(float)
     new_df["DATE"] = pd.to_datetime(new_df["DATE"], dayfirst=True)
-    new_df["DOC_DATE"] = pd.to_datetime(new_df["DOC_DATE"], dayfirst=True)
+    new_df["DOC_DATE"] = pd.to_datetime(
+        new_df["DOC_DATE"], format="mixed", dayfirst=True
+    )
 
     docs_groups = (
         new_df[["DOC_DATE", "DOC_VERSION"]].groupby("DOC_DATE").max().reset_index()

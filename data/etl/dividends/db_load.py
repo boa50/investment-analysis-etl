@@ -18,6 +18,10 @@ try:
         )
 
     batch_load.load_data(table_name="stocks-dividends", df=df)
+
+    print()
+    print("Loaded new dividends")
+
     Path("data/processed/stocks-dividends.csv").unlink(missing_ok=True)
 except FileNotFoundError:
     print("Dividend file doesn't exist")
@@ -26,6 +30,10 @@ except FileNotFoundError:
 try:
     df = pd.read_csv("data/processed/stocks-dividends-docs-processed.csv")
     batch_load.load_data(table_name="stocks-dividends-docs-processed", df=df)
+
+    print()
+    print("Loaded new dividends docs processed")
+
     Path("data/processed/stocks-dividends-docs-processed.csv").unlink(missing_ok=True)
 
     dividends_files_path = "data/raw/dividends/"
@@ -47,6 +55,10 @@ df_dividends_columns = ["TICKER", "DATE", "VALUE", "DOC_DATE", "VERSION"]
 
 df = pd.DataFrame(
     data=[
+        create_custom_dividend_row("BBAS3", "2023-03-03", 0.00259905),
+        create_custom_dividend_row("BBAS3", "2023-03-03", 0.00632990),
+        create_custom_dividend_row("BBAS3", "2023-08-30", 0.00156180),
+        create_custom_dividend_row("BBAS3", "2023-08-30", 0.00711400),
         create_custom_dividend_row("BBAS3", "2024-02-29", 0.00741179),
         create_custom_dividend_row("BBAS3", "2024-08-30", 0.00270692),
         create_custom_dividend_row("BBAS3", "2024-08-30", 0.00560564),
