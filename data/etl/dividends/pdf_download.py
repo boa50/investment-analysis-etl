@@ -10,7 +10,7 @@ opener.addheaders = [("User-agent", "Mozilla/5.0")]
 urllib.request.install_opener(opener)
 
 
-def download_file(filename: str, url: str):
+def _download_file(filename: str, url: str):
     output_path = "data/raw/dividends/"
 
     print("Downloading {} ...".format(filename))
@@ -20,7 +20,7 @@ def download_file(filename: str, url: str):
         print("Error downloading {} ... {}".format(filename, error))
 
 
-def create_file_names(df: pd.DataFrame):
+def _create_file_names(df: pd.DataFrame):
     protocol_text = "&numProtocolo="
     sequence_text = "&numSequencia="
     version_text = "&numVersao="
@@ -55,7 +55,7 @@ def create_file_names(df: pd.DataFrame):
     return df["FILE_NAME"]
 
 
-def process_ipe_file(
+def _process_ipe_file(
     document_year: str, already_processed_files: list, available_cds_cvm: list
 ):
     file_name = f"ipe_cia_aberta_{document_year}.csv"
@@ -82,7 +82,7 @@ def process_ipe_file(
 
     df = df.drop("Categoria", axis=1)
 
-    df["FILE_NAME"] = create_file_names(df)
+    df["FILE_NAME"] = _create_file_names(df)
 
     df = df[df["Codigo_CVM"].isin(available_cds_cvm)]
 
@@ -90,29 +90,30 @@ def process_ipe_file(
         file_name = row["FILE_NAME"]
 
         if file_name not in already_processed_files:
-            download_file(filename=file_name, url=row["Link_Download"])
+            _download_file(filename=file_name, url=row["Link_Download"])
 
 
-Path("data/raw/dividends").mkdir(exist_ok=True)
+def download_pdfs():
+    Path("data/raw/dividends").mkdir(exist_ok=True)
 
-docs_path = "data/raw/"
-docs = os.listdir(docs_path)
-docs = [f for f in docs if "ipe_cia_aberta_" in f]
-documents_years = [f[-8:-4] for f in docs]
-documents_years.sort()
+    docs_path = "data/raw/"
+    docs = os.listdir(docs_path)
+    docs = [f for f in docs if "ipe_cia_aberta_" in f]
+    documents_years = [f[-8:-4] for f in docs]
+    documents_years.sort()
 
-available_cds_cvm = [int(n) for n in queries.get_available_cds_cvm()]
+    available_cds_cvm = [int(n) for n in queries.get_available_cds_cvm()]
 
-already_downloaded_files = os.listdir("data/raw/dividends/")
-already_processed_files = queries.get_already_processed_files()
+    already_downloaded_files = os.listdir("data/raw/dividends/")
+    already_processed_files = queries.get_already_processed_files()
 
-already_processed_files = list(
-    set([*already_downloaded_files, *already_processed_files])
-)
-
-for year in documents_years:
-    process_ipe_file(
-        document_year=year,
-        already_processed_files=already_processed_files,
-        available_cds_cvm=available_cds_cvm,
+    already_processed_files = list(
+        set([*already_downloaded_files, *already_processed_files])
     )
+
+    for year in documents_years:
+        _process_ipe_file(
+            document_year=year,
+            already_processed_files=already_processed_files,
+            available_cds_cvm=available_cds_cvm,
+        )

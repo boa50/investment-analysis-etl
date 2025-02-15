@@ -4,7 +4,7 @@ import os
 import queries
 
 
-def get_doc_dividends(doc_path: str):
+def _get_doc_dividends(doc_path: str):
     doc = pymupdf.open(doc_path)
 
     for page in doc:
@@ -23,7 +23,7 @@ def get_doc_dividends(doc_path: str):
             return df
 
 
-def clean_df_dividends(df: pd.DataFrame):
+def _clean_df_dividends(df: pd.DataFrame):
     new_df = df.copy()
 
     new_df = new_df.replace("\n", "", regex=True)
@@ -50,7 +50,7 @@ def clean_df_dividends(df: pd.DataFrame):
     return new_df
 
 
-def calculate_value_splits(df: pd.DataFrame):
+def _calculate_value_splits(df: pd.DataFrame):
     df_all_dividends = pd.DataFrame()
     tickers = df["TICKER"].unique()
     stocks_splits = queries.get_stocks_splits()
@@ -72,7 +72,7 @@ def calculate_value_splits(df: pd.DataFrame):
     return df_all_dividends
 
 
-def load_dividends_from_pdf(available_tickers: list):
+def _load_dividends_from_pdf(available_tickers: list):
     df_all_dividends = pd.DataFrame()
     df_docs_processed = pd.DataFrame()
 
@@ -81,19 +81,19 @@ def load_dividends_from_pdf(available_tickers: list):
 
     for doc in docs:
         doc_path = docs_path + doc
-        df_doc_dividends = get_doc_dividends(doc_path=doc_path)
+        df_doc_dividends = _get_doc_dividends(doc_path=doc_path)
         df_all_dividends = pd.concat([df_all_dividends, df_doc_dividends])
         df_docs_processed = pd.concat(
             [df_docs_processed, pd.DataFrame(data=[doc], columns=["FILE_NAME"])]
         )
 
-    df_all_dividends = clean_df_dividends(df_all_dividends)
+    df_all_dividends = _clean_df_dividends(df_all_dividends)
 
     df_all_dividends = df_all_dividends[
         df_all_dividends["TICKER"].isin(available_tickers)
     ]
 
-    df_all_dividends = calculate_value_splits(df=df_all_dividends)
+    df_all_dividends = _calculate_value_splits(df=df_all_dividends)
 
     df_all_dividends.to_csv("data/processed/stocks-dividends.csv", index=False)
     df_docs_processed.to_csv(
@@ -101,6 +101,7 @@ def load_dividends_from_pdf(available_tickers: list):
     )
 
 
-available_tickers = queries.get_available_tickers()
+def load_dividends_into_csv():
+    available_tickers = queries.get_available_tickers()
 
-load_dividends_from_pdf(available_tickers=available_tickers)
+    _load_dividends_from_pdf(available_tickers=available_tickers)
