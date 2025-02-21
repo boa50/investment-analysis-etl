@@ -1,5 +1,6 @@
 import pymupdf
 import pandas as pd
+import numpy as np
 import os
 import queries
 
@@ -13,9 +14,35 @@ def _get_doc_dividends(doc_path: str):
             df_version = pd.DataFrame(tabs[0].extract())
 
             df = pd.DataFrame(tabs[1].extract())
-            df = df.iloc[2:]
-            df = df[[0, 1, 6]]
-            df.columns = ["TICKER", "VALUE", "DATE"]
+            is_installments = df.iat[2, 5] == "Parcelado"
+
+            if not is_installments:
+                df = df.iloc[2:]
+                df = df[[0, 1, 6]]
+                df.columns = ["ISIN", "VALUE", "DATE"]
+            else:
+                df = df.iloc[2:]
+                df = df[[0]]
+                df.columns = ["ISIN"]
+
+                df_installments = pd.DataFrame(tabs[2].extract())
+                df_installments = df_installments.iloc[1:]
+                df_installments.columns = ["DATE", "VALUE"]
+
+                df_installments["DATE"] = df_installments["DATE"].replace("", np.nan)
+                df_installments = df_installments.dropna()
+
+                df_installments_length = df_installments.shape[0]
+                if df_installments_length == 0:
+                    return pd.DataFrame()
+
+                df_installments = df_installments.sort_values(by="DATE")
+
+                df_installments["ISIN"] = np.resize(
+                    df["ISIN"].values, df_installments_length
+                )
+
+                df = df_installments[["ISIN", "VALUE", "DATE"]].copy()
 
             df["DOC_DATE"] = df_version.iat[5, 0]
             df["DOC_VERSION"] = df_version.iat[7, 1]
@@ -28,7 +55,18 @@ def _clean_df_dividends(df: pd.DataFrame):
 
     new_df = new_df.replace("\n", "", regex=True)
 
-    new_df["TICKER"] = new_df["TICKER"].str[2:6] + new_df["TICKER"].str[-1]
+    df_code_ticker = pd.read_csv(
+        "data/raw/b3_stocks_codes_tickers.csv",
+        encoding="ISO-8859-1",
+        skiprows=1,
+        sep=";",
+        usecols=["TckrSymb", "ISIN"],
+    )
+
+    df_code_ticker.columns = ["TICKER", "ISIN"]
+    df_code_ticker = df_code_ticker[df_code_ticker["TICKER"].str.len() == 5]
+
+    new_df = pd.merge(new_df, df_code_ticker, on="ISIN", how="left")
     new_df["VALUE"] = new_df["VALUE"].str.replace(",", ".").astype(float)
     new_df["DATE"] = pd.to_datetime(new_df["DATE"], dayfirst=True)
     new_df["DOC_DATE"] = pd.to_datetime(
@@ -72,7 +110,7 @@ def _calculate_value_splits(df: pd.DataFrame):
     return df_all_dividends
 
 
-def _load_dividends_from_pdf(available_tickers: list):
+def _load_dividends_from_pdf():
     df_all_dividends = pd.DataFrame()
     df_docs_processed = pd.DataFrame()
 
@@ -82,16 +120,13 @@ def _load_dividends_from_pdf(available_tickers: list):
     for doc in docs:
         doc_path = docs_path + doc
         df_doc_dividends = _get_doc_dividends(doc_path=doc_path)
-        df_all_dividends = pd.concat([df_all_dividends, df_doc_dividends])
+        if df_doc_dividends.shape[0] > 0:
+            df_all_dividends = pd.concat([df_all_dividends, df_doc_dividends])
         df_docs_processed = pd.concat(
             [df_docs_processed, pd.DataFrame(data=[doc], columns=["FILE_NAME"])]
         )
 
     df_all_dividends = _clean_df_dividends(df_all_dividends)
-
-    df_all_dividends = df_all_dividends[
-        df_all_dividends["TICKER"].isin(available_tickers)
-    ]
 
     df_all_dividends = _calculate_value_splits(df=df_all_dividends)
 
@@ -102,6 +137,4 @@ def _load_dividends_from_pdf(available_tickers: list):
 
 
 def load_dividends_into_csv():
-    available_tickers = queries.get_available_tickers()
-
-    _load_dividends_from_pdf(available_tickers=available_tickers)
+    _load_dividends_from_pdf()
