@@ -18,6 +18,7 @@ def _download_file(filename: str, url: str):
         urllib.request.urlretrieve(url, os.path.join(output_path, filename))
     except Exception as error:
         print("Error downloading {} ... {}".format(filename, error))
+        Path("data/raw/dividends/" + filename).unlink(missing_ok=True)
 
 
 def _create_file_names(df: pd.DataFrame):

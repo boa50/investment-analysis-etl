@@ -14,6 +14,11 @@ df_fca_manual = pd.DataFrame(
             "Codigo_Negociacao": "SANB4",
         },
         {
+            "CNPJ_Companhia": "90.400.888/0001-42",
+            "Valor_Mobiliario": "Units",
+            "Codigo_Negociacao": "SANB11",
+        },
+        {
             "CNPJ_Companhia": "30.306.294/0001-45",
             "Valor_Mobiliario": "Ações Ordinárias",
             "Codigo_Negociacao": "BPAC3",
@@ -22,6 +27,11 @@ df_fca_manual = pd.DataFrame(
             "CNPJ_Companhia": "30.306.294/0001-45",
             "Valor_Mobiliario": "Ações Preferenciais",
             "Codigo_Negociacao": "BPAC5",
+        },
+        {
+            "CNPJ_Companhia": "30.306.294/0001-45",
+            "Valor_Mobiliario": "Units",
+            "Codigo_Negociacao": "BPAC11",
         },
     ],
 )
@@ -281,8 +291,11 @@ df_fca["Segmento"] = df_fca.groupby("CNPJ_Companhia")["Segmento"].ffill()
 
 df_fca = df_fca[
     df_fca["CNPJ_Companhia"].isin(df["CNPJ_CIA"].values)
-    & df_fca["Valor_Mobiliario"].isin(["Ações Ordinárias", "Ações Preferenciais"])
+    & df_fca["Valor_Mobiliario"].isin(
+        ["Ações Ordinárias", "Ações Preferenciais", "Units"]
+    )
     & df_fca["Codigo_Negociacao"].notna()
+    & (df_fca["Codigo_Negociacao"] != "000000")
 ]
 df_fca = df_fca.drop("Valor_Mobiliario", axis=1)
 df_fca = df_fca.groupby("CNPJ_Companhia", as_index=False).agg(

@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import queries
+from multiprocessing import Pool, cpu_count
 
 
 def _get_doc_dividends(doc_path: str):
@@ -20,6 +21,9 @@ def _get_doc_dividends(doc_path: str):
                 df = df.iloc[2:]
                 df = df[[0, 1, 6]]
                 df.columns = ["ISIN", "VALUE", "DATE"]
+
+                df["DATE"] = df["DATE"].replace("", np.nan)
+                df = df.dropna()
             else:
                 df = df.iloc[2:]
                 df = df[[0]]
@@ -64,9 +68,14 @@ def _clean_df_dividends(df: pd.DataFrame):
     )
 
     df_code_ticker.columns = ["TICKER", "ISIN"]
-    df_code_ticker = df_code_ticker[df_code_ticker["TICKER"].str.len() == 5]
+    df_code_ticker = df_code_ticker[
+        df_code_ticker["TICKER"].str.len().isin([5, 6])
+        & ~df_code_ticker["TICKER"].str[-1].isin(["F", "M", "Q", "R"])
+    ]
 
     new_df = pd.merge(new_df, df_code_ticker, on="ISIN", how="left")
+    new_df = new_df.dropna(subset="TICKER", axis=0)
+
     new_df["VALUE"] = new_df["VALUE"].str.replace(",", ".").astype(float)
     new_df["DATE"] = pd.to_datetime(new_df["DATE"], dayfirst=True)
     new_df["DOC_DATE"] = pd.to_datetime(
@@ -110,21 +119,47 @@ def _calculate_value_splits(df: pd.DataFrame):
     return df_all_dividends
 
 
-def _load_dividends_from_pdf():
+def process_docs_parallel(doc_path: str, doc: str):
+    df_doc_dividends = _get_doc_dividends(doc_path=doc_path)
+
+    df_docs_processed = pd.DataFrame(data=[doc], columns=["FILE_NAME"])
+
+    if (df_doc_dividends is not None) and (df_doc_dividends.shape[0] > 0):
+        return (df_doc_dividends, df_docs_processed)
+    else:
+        return (pd.DataFrame(), df_docs_processed)
+
+
+def load_dividends_from_pdf():
     df_all_dividends = pd.DataFrame()
     df_docs_processed = pd.DataFrame()
 
     docs_path = "data/raw/dividends/"
     docs = os.listdir(docs_path)
 
+    pool = Pool(processes=(cpu_count() - 1))
+
+    processes_results = []
+    ref_df_all_dividends = []
+    ref_df_docs_processed = []
     for doc in docs:
         doc_path = docs_path + doc
-        df_doc_dividends = _get_doc_dividends(doc_path=doc_path)
-        if df_doc_dividends.shape[0] > 0:
-            df_all_dividends = pd.concat([df_all_dividends, df_doc_dividends])
-        df_docs_processed = pd.concat(
-            [df_docs_processed, pd.DataFrame(data=[doc], columns=["FILE_NAME"])]
-        )
+
+        result = pool.apply_async(process_docs_parallel, args=(doc_path, doc))
+
+        result_dfs = result.get()
+        ref_df_all_dividends.append(result_dfs[0])
+        ref_df_docs_processed.append(result_dfs[1])
+
+        processes_results.append(result)
+
+    [result.wait() for result in processes_results]
+
+    pool.close()
+    pool.join()
+
+    df_all_dividends = pd.concat(ref_df_all_dividends)
+    df_docs_processed = pd.concat(ref_df_docs_processed)
 
     df_all_dividends = _clean_df_dividends(df_all_dividends)
 
@@ -134,7 +169,3 @@ def _load_dividends_from_pdf():
     df_docs_processed.to_csv(
         "data/processed/stocks-dividends-docs-processed.csv", index=False
     )
-
-
-def load_dividends_into_csv():
-    _load_dividends_from_pdf()
