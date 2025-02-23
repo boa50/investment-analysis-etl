@@ -72,11 +72,20 @@ def get_cd_cvm_by_ticker(ticker):
     return cd_cvm
 
 
-def delete_outdated_dividends(ticker: str, doc_date: str, doc_version: int):
+def get_cds_cvm():
+    sql = f"""
+            SELECT CD_CVM, TICKERS
+            FROM {get_table_full_name("stocks-basic-info")}
+        """
+
+    return execute_query(sql)
+
+
+def delete_outdated_dividends(ticker_base: str, doc_date: str, doc_version: int):
     sql = f"""
             DELETE
             FROM {get_table_full_name("stocks-dividends")} 
-            WHERE TICKER = '{ticker.upper()}'
+            WHERE TICKER LIKE '%{ticker_base.upper()}%'
                 AND DOC_DATE = '{doc_date}'
                 AND VERSION < {doc_version}
         """

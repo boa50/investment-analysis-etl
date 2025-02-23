@@ -9,14 +9,20 @@ def load_dividends_into_db():
     try:
         df = pd.read_csv("data/processed/stocks-dividends.csv")
 
-        df_docs_control = df[["TICKER", "DOC_DATE", "DOC_VERSION"]].drop_duplicates()
+        df["TICKER_BASE"] = df["TICKER"].str[:4]
+
+        df_docs_control = df[
+            ["TICKER_BASE", "DOC_DATE", "DOC_VERSION"]
+        ].drop_duplicates()
 
         for _, row in df_docs_control.iterrows():
             queries.delete_outdated_dividends(
-                ticker=row["TICKER"],
+                ticker_base=row["TICKER_BASE"],
                 doc_date=row["DOC_DATE"],
                 doc_version=row["DOC_VERSION"],
             )
+
+        df = df.drop("TICKER_BASE", axis=1)
 
         batch_load.load_data(table_name="stocks-dividends", df=df)
 

@@ -14,11 +14,6 @@ df_fca_manual = pd.DataFrame(
             "Codigo_Negociacao": "SANB4",
         },
         {
-            "CNPJ_Companhia": "90.400.888/0001-42",
-            "Valor_Mobiliario": "Units",
-            "Codigo_Negociacao": "SANB11",
-        },
-        {
             "CNPJ_Companhia": "30.306.294/0001-45",
             "Valor_Mobiliario": "Ações Ordinárias",
             "Codigo_Negociacao": "BPAC3",

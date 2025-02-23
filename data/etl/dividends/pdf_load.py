@@ -75,6 +75,7 @@ def _clean_df_dividends(df: pd.DataFrame):
 
     new_df = pd.merge(new_df, df_code_ticker, on="ISIN", how="left")
     new_df = new_df.dropna(subset="TICKER", axis=0)
+    new_df["TICKER_BASE"] = new_df["TICKER"].str[:4]
 
     new_df["VALUE"] = new_df["VALUE"].str.replace(",", ".").astype(float)
     new_df["DATE"] = pd.to_datetime(new_df["DATE"], dayfirst=True)
@@ -83,10 +84,15 @@ def _clean_df_dividends(df: pd.DataFrame):
     )
 
     docs_groups = (
-        new_df[["DOC_DATE", "DOC_VERSION"]].groupby("DOC_DATE").max().reset_index()
+        new_df[["TICKER_BASE", "DOC_DATE", "DOC_VERSION"]]
+        .groupby(["TICKER_BASE", "DOC_DATE"])
+        .max()
+        .reset_index()
     )
 
-    new_df = new_df.merge(docs_groups, how="inner", on=["DOC_DATE", "DOC_VERSION"])
+    new_df = new_df.merge(
+        docs_groups, how="inner", on=["TICKER_BASE", "DOC_DATE", "DOC_VERSION"]
+    )
 
     new_df = (
         new_df[["TICKER", "DATE", "VALUE", "DOC_DATE", "DOC_VERSION"]]
@@ -104,8 +110,13 @@ def _calculate_value_splits(df: pd.DataFrame):
     stocks_splits["DATE"] = pd.to_datetime(stocks_splits["DATE"])
     stocks_splits["PROPORTION"] = stocks_splits["PROPORTION"].astype(float)
 
+    df_cds_cvm = queries.get_cds_cvm()
+    df_cds_cvm["TICKER_BASE"] = df_cds_cvm["TICKERS"].str[:4]
+    df_cds_cvm = df_cds_cvm.drop("TICKERS", axis=1)
+
     for ticker in tickers:
-        cd_cvm = queries.get_cd_cvm_by_ticker(ticker=ticker)
+        print(ticker)
+        cd_cvm = df_cds_cvm[df_cds_cvm["TICKER_BASE"] == ticker[:4]].iat[0, 0]
         stocks_splits_tk = stocks_splits[stocks_splits["CD_CVM"] == cd_cvm]
         df_dividends_tk = df[df["TICKER"] == ticker]
 
