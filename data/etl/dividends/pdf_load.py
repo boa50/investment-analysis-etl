@@ -115,7 +115,6 @@ def _calculate_value_splits(df: pd.DataFrame):
     df_cds_cvm = df_cds_cvm.drop("TICKERS", axis=1)
 
     for ticker in tickers:
-        print(ticker)
         cd_cvm = df_cds_cvm[df_cds_cvm["TICKER_BASE"] == ticker[:4]].iat[0, 0]
         stocks_splits_tk = stocks_splits[stocks_splits["CD_CVM"] == cd_cvm]
         df_dividends_tk = df[df["TICKER"] == ticker]
