@@ -84,5 +84,10 @@ def get_schema(table_name):
             bigquery.SchemaField("DATE", "DATE", mode="REQUIRED"),
             bigquery.SchemaField("PROPORTION", "DECIMAL", mode="REQUIRED"),
         ]
+    elif table_name == "files-download-control":
+        return [
+            bigquery.SchemaField("NAME", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("DATE", "DATE", mode="REQUIRED"),
+        ]
     else:
         return []

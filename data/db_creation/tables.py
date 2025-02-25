@@ -35,3 +35,4 @@ def create_table(table_name):
 # create_table("stocks-dividends-docs-processed")
 # create_table("stocks-dividends-old")
 # create_table("stocks-splits")
+# create_table("files-download-control")

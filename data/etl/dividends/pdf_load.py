@@ -142,6 +142,9 @@ def load_dividends_from_pdf():
     pool.close()
     pool.join()
 
+    if len(ref_df_all_dividends) == 0:
+        return False
+
     df_all_dividends = pd.concat(ref_df_all_dividends)
     df_docs_processed = pd.concat(ref_df_docs_processed)
 
@@ -153,3 +156,5 @@ def load_dividends_from_pdf():
     df_docs_processed.to_csv(
         "data/processed/stocks-dividends-docs-processed.csv", index=False
     )
+
+    return True
