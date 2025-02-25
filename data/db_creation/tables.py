@@ -25,6 +25,7 @@ def create_table(table_name):
     )
 
 
+# create_table("stocks-available")
 # create_table("stocks-basic-info")
 # create_table("stocks-fundaments")
 # create_table("stocks-history")
@@ -35,4 +36,5 @@ def create_table(table_name):
 # create_table("stocks-dividends-docs-processed")
 # create_table("stocks-dividends-old")
 # create_table("stocks-splits")
+# create_table("stocks-prices")
 # create_table("files-download-control")

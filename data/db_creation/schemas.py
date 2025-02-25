@@ -84,6 +84,17 @@ def get_schema(table_name):
             bigquery.SchemaField("DATE", "DATE", mode="REQUIRED"),
             bigquery.SchemaField("PROPORTION", "DECIMAL", mode="REQUIRED"),
         ]
+    elif table_name == "stocks-prices":
+        return [
+            bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("DATE", "DATE", mode="REQUIRED"),
+            bigquery.SchemaField("PRICE", "BIGDECIMAL", mode="REQUIRED"),
+        ]
+    elif table_name == "stocks-available":
+        return [
+            bigquery.SchemaField("CD_CVM", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
+        ]
     elif table_name == "files-download-control":
         return [
             bigquery.SchemaField("NAME", "STRING", mode="REQUIRED"),
