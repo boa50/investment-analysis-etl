@@ -33,4 +33,5 @@ def create_table(table_name):
 # create_table("ipca")
 # create_table("stocks-dividends")
 # create_table("stocks-dividends-docs-processed")
+# create_table("stocks-dividends-old")
 # create_table("stocks-splits")

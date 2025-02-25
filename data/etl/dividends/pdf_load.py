@@ -2,7 +2,7 @@ import pymupdf
 import pandas as pd
 import numpy as np
 import os
-import queries
+import utils
 from multiprocessing import Pool, cpu_count
 
 
@@ -103,32 +103,6 @@ def _clean_df_dividends(df: pd.DataFrame):
     return new_df
 
 
-def _calculate_value_splits(df: pd.DataFrame):
-    df_all_dividends = pd.DataFrame()
-    tickers = df["TICKER"].unique()
-    stocks_splits = queries.get_stocks_splits()
-    stocks_splits["DATE"] = pd.to_datetime(stocks_splits["DATE"])
-    stocks_splits["PROPORTION"] = stocks_splits["PROPORTION"].astype(float)
-
-    df_cds_cvm = queries.get_cds_cvm()
-    df_cds_cvm["TICKER_BASE"] = df_cds_cvm["TICKERS"].str[:4]
-    df_cds_cvm = df_cds_cvm.drop("TICKERS", axis=1)
-
-    for ticker in tickers:
-        cd_cvm = df_cds_cvm[df_cds_cvm["TICKER_BASE"] == ticker[:4]].iat[0, 0]
-        stocks_splits_tk = stocks_splits[stocks_splits["CD_CVM"] == cd_cvm]
-        df_dividends_tk = df[df["TICKER"] == ticker]
-
-        for _, row in stocks_splits_tk.iterrows():
-            df_dividends_tk.loc[df_dividends_tk["DATE"] <= row["DATE"], "VALUE"] /= row[
-                "PROPORTION"
-            ]
-
-        df_all_dividends = pd.concat([df_all_dividends, df_dividends_tk])
-
-    return df_all_dividends
-
-
 def process_docs_parallel(doc_path: str, doc: str):
     df_doc_dividends = _get_doc_dividends(doc_path=doc_path)
 
@@ -173,7 +147,7 @@ def load_dividends_from_pdf():
 
     df_all_dividends = _clean_df_dividends(df_all_dividends)
 
-    df_all_dividends = _calculate_value_splits(df=df_all_dividends)
+    df_all_dividends = utils.calculate_value_splits(df=df_all_dividends)
 
     df_all_dividends.to_csv("data/processed/stocks-dividends.csv", index=False)
     df_docs_processed.to_csv(

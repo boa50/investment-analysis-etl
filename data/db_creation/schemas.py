@@ -71,6 +71,13 @@ def get_schema(table_name):
         ]
     elif table_name == "stocks-dividends-docs-processed":
         return [bigquery.SchemaField("FILE_NAME", "STRING", mode="REQUIRED")]
+    elif table_name == "stocks-dividends-old":
+        return [
+            bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("DATE", "DATE", mode="REQUIRED"),
+            bigquery.SchemaField("VALUE", "BIGDECIMAL", mode="REQUIRED"),
+            bigquery.SchemaField("TYPE", "STRING", mode="NULLABLE"),
+        ]
     elif table_name == "stocks-splits":
         return [
             bigquery.SchemaField("CD_CVM", "STRING", mode="REQUIRED"),
