@@ -65,10 +65,6 @@ def load_custom_dividends_into_db():
 
     df = pd.DataFrame(
         data=[
-            create_custom_dividend_row("BBAS3", "2023-03-03", 0.00259905),
-            create_custom_dividend_row("BBAS3", "2023-03-03", 0.00632990),
-            create_custom_dividend_row("BBAS3", "2023-08-30", 0.00156180),
-            create_custom_dividend_row("BBAS3", "2023-08-30", 0.00711400),
             create_custom_dividend_row("BBAS3", "2024-02-29", 0.00741179),
             create_custom_dividend_row("BBAS3", "2024-08-30", 0.00270692),
             create_custom_dividend_row("BBAS3", "2024-08-30", 0.00560564),

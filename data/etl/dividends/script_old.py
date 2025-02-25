@@ -1,3 +1,4 @@
+from data.db_creation import batch_load
 import pandas as pd
 import numpy as np
 import os
@@ -93,6 +94,13 @@ df_dividends = clean_unused_tickers(df_dividends)
 
 df_dividends = df_dividends[["TICKER", "DATE", "VALUE", "TYPE"]]
 
+df_dividends = df_dividends[
+    (df_dividends["DATE"].dt.year <= 2023) & (df_dividends["DATE"].dt.year >= 2013)
+]
+
 df_dividends = utils.calculate_value_splits(df=df_dividends)
 
-df_dividends.to_csv("data/processed/stocks-dividends-old.csv", index=False)
+batch_load.load_data(table_name="stocks-dividends-old", df=df_dividends)
+
+print()
+print("Loaded old dividends")
