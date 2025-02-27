@@ -95,8 +95,7 @@ def _delete_files(base_filename: str, file_type: str, files_path: str):
     )
 
     for file in data_files:
-        print(file)
-        # Path(file).unlink(missing_ok=True)
+        Path(file).unlink(missing_ok=True)
 
 
 def _download_zips(files_to_download: list):
@@ -113,10 +112,10 @@ def _download_zips(files_to_download: list):
         url = f"https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/{filename[:3].upper()}/DADOS/{fname}"
 
         print(f"Downloading {fname} ...")
-        # try:
-        #     urlretrieve(url, join(zip_path, fname))
-        # except Exception:
-        #     print(f"Error downloading {fname} ...")
+        try:
+            urlretrieve(url, join(zip_path, fname))
+        except Exception:
+            print(f"Error downloading {fname} ...")
 
 
 def _delete_unnecessary_files():
@@ -148,7 +147,7 @@ def _delete_unnecessary_files():
 
         filepath = join(data_path, filename)
 
-        # Path(filepath).unlink(missing_ok=True)
+        Path(filepath).unlink(missing_ok=True)
 
 
 def _extract_zips(downloaded_files: list, delete_zips=True):
@@ -163,11 +162,11 @@ def _extract_zips(downloaded_files: list, delete_zips=True):
         for data_file in data_files:
             print(f"Extracting {data_file} ...")
 
-            # with zipfile.ZipFile(data_file, "r") as zip_ref:
-            #     zip_ref.extractall("data/raw")
+            with zipfile.ZipFile(data_file, "r") as zip_ref:
+                zip_ref.extractall("data/raw")
 
-            # if delete_zips:
-            #     Path(data_file).unlink(missing_ok=True)
+            if delete_zips:
+                Path(data_file).unlink(missing_ok=True)
 
     _delete_unnecessary_files()
 
