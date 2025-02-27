@@ -49,3 +49,23 @@ def get_segments():
     df_segments = df_segments.rename(columns={"TICKERS": "TICKER"})
 
     return df_segments.reset_index(drop=True)
+
+
+def get_files_last_download_date(file_data: str):
+    sql = f"""
+            SELECT *
+            FROM {db.get_table_full_name("files-download-control")}
+            WHERE NAME LIKE '{file_data}_cia_aberta_%'
+        """
+
+    return db.execute_query(sql)
+
+
+def update_control_table(filename: str, date: str):
+    sql = f"""
+            UPDATE {db.get_table_full_name("files-download-control")}
+            SET DATE = '{date}'
+            WHERE NAME = '{filename}'
+        """
+
+    return db.execute_query(sql)

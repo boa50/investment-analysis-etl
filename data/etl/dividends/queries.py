@@ -109,21 +109,21 @@ def get_all_custom_dividends():
     return execute_query(sql)
 
 
-def get_ipe_files_last_download_date():
-    sql = f"""
-            SELECT *
-            FROM {get_table_full_name("files-download-control")}
-            WHERE NAME LIKE 'ipe_cia_aberta_%'
-        """
+# def get_ipe_files_last_download_date():
+#     sql = f"""
+#             SELECT *
+#             FROM {get_table_full_name("files-download-control")}
+#             WHERE NAME LIKE 'ipe_cia_aberta_%'
+#         """
 
-    return execute_query(sql)
+#     return execute_query(sql)
 
 
-def update_control_table(filename, date):
-    sql = f"""
-            UPDATE {get_table_full_name("files-download-control")}
-            SET DATE = '{date}'
-            WHERE NAME = '{filename}'
-        """
+# def update_control_table(filename, date):
+#     sql = f"""
+#             UPDATE {get_table_full_name("files-download-control")}
+#             SET DATE = '{date}'
+#             WHERE NAME = '{filename}'
+#         """
 
-    return execute_query(sql)
+#     return execute_query(sql)
