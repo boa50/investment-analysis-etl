@@ -3,7 +3,7 @@ import os
 import datetime
 
 
-def load_files(years_load, files_types_load):
+def load_files(years_load: list, files_types_load: list):
     files_load = []
 
     files_prefixes = ["itr", "dfp"]
@@ -24,7 +24,7 @@ def load_files(years_load, files_types_load):
 
     for year in years_load:
         for file in files_load:
-            fname = "data/raw/" + file["FILE_NAME"] + str(year) + ".csv"
+            fname = f"data/raw/{file['FILE_NAME']}{year}.csv"
 
             if os.path.isfile(fname):
                 cols_load = [
@@ -146,6 +146,7 @@ def get_kpi_by_cvm_code(
     df_kpi = df.merge(
         cds_conta, how="left", on=["CD_CVM", "FILE_CATEGORY_SHORT", "CD_CONTA"]
     )
+
     df_kpi = df_kpi.merge(
         dss_conta,
         how="left",

@@ -36,6 +36,16 @@ def get_fundaments(n_years=10):
     return db.execute_query(sql)
 
 
+def delete_data_from_fundaments(years_to_delete: list):
+    sql = f"""
+            DELETE
+            FROM {db.get_table_full_name("stocks-fundaments")}
+            WHERE DT_YEAR IN ({",".join([str(year) for year in years_to_delete])})
+        """
+
+    db.execute_query(sql)
+
+
 def get_segments():
     sql = f"""
             SELECT CD_CVM, TICKERS, SEGMENT
@@ -66,6 +76,15 @@ def update_control_table(filename: str, date: str):
             UPDATE {db.get_table_full_name("files-download-control")}
             SET DATE = '{date}'
             WHERE NAME = '{filename}'
+        """
+
+    return db.execute_query(sql)
+
+
+def get_available_stocks():
+    sql = f"""
+            SELECT *
+            FROM {db.get_table_full_name("stocks-available")}
         """
 
     return db.execute_query(sql)

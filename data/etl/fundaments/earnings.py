@@ -1,4 +1,4 @@
-from utils import get_dre_kpi_info
+from data.etl.fundaments.utils import get_dre_kpi_info
 
 
 def load_ebit(df_dre, df_reference_table, verbose=False):

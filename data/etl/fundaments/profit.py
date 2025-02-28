@@ -1,5 +1,5 @@
 import pandas as pd
-from utils import get_dre_kpi_info, get_cagr
+from data.etl.fundaments.utils import get_dre_kpi_info, get_cagr
 
 
 def load_profit(df_dre, df_reference_table, verbose=False):

@@ -1,4 +1,4 @@
-from utils import get_dre_kpi_info, get_cagr
+from data.etl.fundaments.utils import get_dre_kpi_info, get_cagr
 
 
 def load_net_revenue(df_dre, df_reference_table, verbose=False):

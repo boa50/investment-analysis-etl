@@ -1,4 +1,4 @@
-from utils import get_bp_kpi_info
+from data.etl.fundaments.utils import get_bp_kpi_info
 
 
 def load_total_debt(df_bpp, df_reference_table, verbose=False):
