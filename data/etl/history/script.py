@@ -1,13 +1,12 @@
 import pandas as pd
 import numpy as np
+import queries as qu
 
-df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
-df_prices = pd.read_csv("data/processed/stocks-prices.csv", parse_dates=["DATE"])
-df_dividends = pd.read_csv("data/processed/stocks-dividends.csv", parse_dates=["DATE"])
-df_fundaments = pd.read_csv(
-    "data/processed/stocks-fundaments.csv",
-    parse_dates=["DT_INI_EXERC", "DT_FIM_EXERC"],
-)
+df_basic_info = qu.get_basic_info()
+df_prices = qu.get_prices()
+df_dividends = qu.get_dividends()
+df_fundaments = qu.get_fundaments()
+df_stocks_available = qu.get_stocks_available()
 
 
 ### Function to include fundament data into the history dataframe
@@ -18,17 +17,15 @@ def include_fundament(df_history, df_fundaments, kpi_type, column_name):
         df_fundaments_filtered,
         how="left",
         left_on=["CD_CVM", "DATE"],
-        right_on=["CD_CVM", "DT_FIM_EXERC"],
+        right_on=["CD_CVM", "DT_END"],
     )
-    df_history = df_history.drop(
-        ["KPI", "DT_INI_EXERC", "DT_FIM_EXERC", "EXERC_YEAR"], axis=1
-    )
+    df_history = df_history.drop(["KPI", "DT_END"], axis=1)
     fundament_columns = [column_name, column_name + "_ROLLING_YEAR"]
 
     df_history = df_history.rename(
         columns={
-            "VL_CONTA": fundament_columns[0],
-            "VL_CONTA_ROLLING_YEAR": fundament_columns[1],
+            "VALUE_FUNDAMENT": fundament_columns[0],
+            "VALUE_ROLLING_YEAR": fundament_columns[1],
         }
     )
 
@@ -42,10 +39,12 @@ def include_fundament(df_history, df_fundaments, kpi_type, column_name):
         last_fundament_date, how="left", on="CD_CVM"
     )
     df_fundaments_filtered = df_fundaments_filtered[
-        df_fundaments_filtered["DT_FIM_EXERC"] <= df_fundaments_filtered["DATE"]
+        df_fundaments_filtered["DT_END"] <= df_fundaments_filtered["DATE"]
     ]
     df_fundaments_filtered = (
-        df_fundaments_filtered.groupby("CD_CVM")[["VL_CONTA", "VL_CONTA_ROLLING_YEAR"]]
+        df_fundaments_filtered.groupby("CD_CVM")[
+            ["VALUE_FUNDAMENT", "VALUE_ROLLING_YEAR"]
+        ]
         .last()
         .reset_index()
     )
@@ -54,12 +53,12 @@ def include_fundament(df_history, df_fundaments, kpi_type, column_name):
 
     df_history = df_history.fillna(
         {
-            fundament_columns[0]: df_history["VL_CONTA"],
-            fundament_columns[1]: df_history["VL_CONTA_ROLLING_YEAR"],
+            fundament_columns[0]: df_history["VALUE_FUNDAMENT"],
+            fundament_columns[1]: df_history["VALUE_ROLLING_YEAR"],
         }
     )
 
-    df_history = df_history.drop(["VL_CONTA", "VL_CONTA_ROLLING_YEAR"], axis=1)
+    df_history = df_history.drop(["VALUE_FUNDAMENT", "VALUE_ROLLING_YEAR"], axis=1)
 
     return df_history
 
@@ -80,6 +79,9 @@ for ticker in df_prices["TICKER"].unique():
     df_tmp = df_dates.merge(df_prices_filtered, how="left", on="DATE")
     df_tmp = df_tmp.ffill()
     df_history = pd.concat([df_history, df_tmp])
+
+
+df_history = df_history.merge(df_stocks_available, on="TICKER", how="left")
 
 df_history = df_history.dropna(subset=["TICKER"])
 df_history["CD_CVM"] = df_history["CD_CVM"].astype(int)
@@ -148,11 +150,18 @@ df_history = df_history.drop(["VALUE", "Dividends_1y"], axis=1)
 df_history = df_history.drop(["NET_WORTH", "NET_WORTH_ROLLING_YEAR", "VP"], axis=1)
 df_history = df_history.drop(["NUM_TOTAL"], axis=1)
 
+print(df_history.dtypes)
+print(df_history)
+
 # Keeping only weekly data
-df_history = df_history.groupby([df_history["DATE"].dt.to_period("W-SUN"), 
-                                 df_history["CD_CVM"], 
-                                 df_history["TICKER"]]
-                                ).head(1)
+df_history = df_history.groupby(
+    [
+        # df_history["DATE"].dt.to_period("W-SUN"),
+        df_history["DATE"].to_period("W-SUN"),
+        df_history["CD_CVM"],
+        df_history["TICKER"],
+    ]
+).head(1)
 
 df_history.sort_values(by=["TICKER", "DATE"])
 
