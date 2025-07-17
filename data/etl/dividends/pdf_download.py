@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import urllib.request
-import queries
+import data.etl.dividends.queries as queries
 from pathlib import Path
 
 ### Defining urls request agent

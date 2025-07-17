@@ -1,5 +1,5 @@
 from data.db_creation import batch_load
-import queries
+import data.etl.dividends.queries as queries
 import pandas as pd
 from pathlib import Path
 import os

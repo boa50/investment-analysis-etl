@@ -3,7 +3,7 @@ from data.db_creation import batch_load
 from pathlib import Path
 
 
-def load_dividends_into_db():
+def load_prices_into_db():
     try:
         file_path = "data/processed/stocks-prices.csv"
         df = pd.read_csv(file_path)

@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import data.etl.queries.queries as queries
 import data.etl.mappings as mappings
-import utils
-import calculations
+import data.etl.ratings.utils as utils
+import data.etl.ratings.calculations as calculations
 from google.cloud import bigquery
 from data.db_creation.schemas import get_schema
 import os

@@ -1,5 +1,5 @@
 import pandas as pd
-import queries
+import data.etl.prices.queries as queries
 from datetime import datetime
 import yfinance as yf
 import time

@@ -1,4 +1,4 @@
-### Download data from a new company
+### Download data from a new company (Outdated)
 
 - Fill info in the etl/stocks_basic_info.py
 - Run the etl/stocks_in_file.py

@@ -1,6 +1,6 @@
 import pandas as pd
 import yfinance as yf
-from utils import get_yf_ticker
+from data.etl.utils import get_yf_ticker
 
 try:
     df_splits = pd.read_csv("data/processed/stocks-splits.csv")

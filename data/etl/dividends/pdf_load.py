@@ -2,7 +2,7 @@ import pymupdf
 import pandas as pd
 import numpy as np
 import os
-import utils
+import data.etl.dividends.utils as utils
 from multiprocessing import Pool, cpu_count
 
 
@@ -78,7 +78,8 @@ def _clean_df_dividends(df: pd.DataFrame):
     new_df["TICKER_BASE"] = new_df["TICKER"].str[:4]
 
     new_df["VALUE"] = new_df["VALUE"].str.replace(",", ".").astype(float)
-    new_df["DATE"] = pd.to_datetime(new_df["DATE"], dayfirst=True)
+    new_df["DATE"] = pd.to_datetime(new_df["DATE"], dayfirst=True, errors="coerce")
+    new_df = new_df.dropna(axis="index", subset="DATE")
     new_df["DOC_DATE"] = pd.to_datetime(
         new_df["DOC_DATE"], format="mixed", dayfirst=True
     )

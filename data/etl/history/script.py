@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import queries as qu
+import data.etl.history.queries as qu
 
 df_basic_info = qu.get_basic_info()
 df_prices = qu.get_prices()

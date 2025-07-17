@@ -1,5 +1,5 @@
 import pandas as pd
-import queries
+import data.etl.dividends.queries as queries
 
 
 def calculate_value_splits(df: pd.DataFrame):

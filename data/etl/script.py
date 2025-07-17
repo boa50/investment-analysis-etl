@@ -16,7 +16,7 @@ df_files_updated = cvm_download.update_files()
 try:
     prices_data_download.get_latest_prices()
     prices_queries.delete_outdated_prices()
-    prices_db_load.load_dividends_into_db()
+    prices_db_load.load_prices_into_db()
 
     print("Prices updated")
 except FileNotFoundError:
