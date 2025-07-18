@@ -1,53 +1,41 @@
-import pandas as pd
 from data.etl.utils import load_files
+import data.etl.queries.queries as qu
+from datetime import datetime
 
 
-year_initial = 2011
-year_final = 2024
-years_load = list(range(year_initial, year_final + 1))
+def create_stocks_files_list():
+    years_load = list(range(2011, datetime.now().year + 1))
 
-files_types_load = ["BPA"]
+    files_types_load = ["BPA"]
 
-try:
-    df_final = pd.read_csv("data/processed/stocks-files.csv")
-except FileNotFoundError:
-    df_final = pd.DataFrame()
+    cd_cvm_load = [int(cd_cvm) for cd_cvm in qu.get_available_stocks()["CD_CVM"].values]
 
-### Getting only companies available on basic info file and that are not in the final file
-df_basic_info = pd.read_csv("data/processed/stocks-basic-info.csv")
+    print(f"Checking stocks in files for CD_CVM: {cd_cvm_load}")
 
-cd_cvm_load = list(
-    set(df_basic_info["CD_CVM"].values).difference(df_final["CD_CVM"].values)
-)
+    df = load_files(years_load, files_types_load)
 
-print(f"Checking stocks in files for CD_CVM: {cd_cvm_load}")
+    df = df[df["CD_CVM"].isin(cd_cvm_load)]
+    df["FILE_CATEGORY"] = df["FILE_CATEGORY"].astype(str)
+    df[["FILE_PREFIX", "FILE_SUFIX", "FILE_YEAR"]] = df["FILE_CATEGORY"].str.split(
+        "_", n=2, expand=True
+    )
 
-df = load_files(years_load, files_types_load)
+    df = (
+        df.groupby(["CD_CVM", "FILE_PREFIX", "FILE_YEAR"])
+        .agg({"FILE_CATEGORY": "min"})
+        .reset_index()
+    )
 
-df = df[df["CD_CVM"].isin(cd_cvm_load)]
-df["FILE_CATEGORY"] = df["FILE_CATEGORY"].astype(str)
-df[["FILE_PREFIX", "FILE_SUFIX", "FILE_YEAR"]] = df["FILE_CATEGORY"].str.split(
-    "_", n=2, expand=True
-)
+    df = df.drop(["FILE_PREFIX", "FILE_YEAR"], axis=1)
 
-df = (
-    df.groupby(["CD_CVM", "FILE_PREFIX", "FILE_YEAR"])
-    .agg({"FILE_CATEGORY": "min"})
-    .reset_index()
-)
+    df = df.sort_values(by=["CD_CVM", "FILE_CATEGORY"])
 
-df = df.drop(["FILE_PREFIX", "FILE_YEAR"], axis=1)
+    # Fixing punctual problem where the CD_CVM 19348 doens't have all periods on the itr_con_2012 file
+    df.loc[
+        (df["CD_CVM"] == 19348) & (df["FILE_CATEGORY"] == "itr_con_2012"),
+        "FILE_CATEGORY",
+    ] = "itr_ind_2012"
 
-df_final = pd.concat([df_final, df])
+    print(df)
 
-df_final = df_final.sort_values(by=["CD_CVM", "FILE_CATEGORY"])
-
-# Fixing punctual problem where the CD_CVM 19348 doens't have all periods on the itr_con_2012 file
-df_final.loc[
-    (df_final["CD_CVM"] == 19348) & (df_final["FILE_CATEGORY"] == "itr_con_2012"),
-    "FILE_CATEGORY",
-] = "itr_ind_2012"
-
-print(df_final)
-
-df_final.to_csv("data/processed/stocks-files.csv", index=False)
+    df.to_csv("data/processed/stocks-files.csv", index=False)

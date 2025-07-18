@@ -9,8 +9,12 @@ import data.etl.dividends.pdf_load as dividends_pdf_load
 import data.etl.dividends.db_load as dividends_db_load
 
 import data.etl.fundaments.script as fundaments
+import data.etl.stocks_in_file as stocks_in_file
 
 df_files_updated = cvm_download.update_files()
+
+### To regenerate the stocks files list
+# stocks_in_file.create_stocks_files_list()
 
 ### Prices
 try:
