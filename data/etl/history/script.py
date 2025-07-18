@@ -1,19 +1,22 @@
 import pandas as pd
 import numpy as np
-import data.etl.history.queries as qu
 import decimal
+from pathlib import Path
+import data.etl.history.queries as qu_history
+import data.etl.queries.queries as qu
+import data.db_creation.batch_load as batch_load
 
 
 def process_files_to_csv():
-    df_basic_info = qu.get_basic_info()
-    df_prices = qu.get_prices()
+    df_basic_info = qu_history.get_basic_info()
+    df_prices = qu_history.get_prices()
     df_prices = df_prices.sort_values(by="DATE")
     df_prices["DATE"] = pd.to_datetime(df_prices["DATE"])
-    df_dividends = qu.get_dividends()
+    df_dividends = qu_history.get_dividends()
     df_dividends["DATE"] = pd.to_datetime(df_dividends["DATE"])
-    df_fundaments = qu.get_fundaments()
+    df_fundaments = qu_history.get_fundaments()
     df_fundaments["DT_END"] = pd.to_datetime(df_fundaments["DT_END"])
-    df_stocks_available = qu.get_stocks_available()
+    df_stocks_available = qu_history.get_stocks_available()
 
     ### Function to include fundament data into the history dataframe
     def include_fundament(df_history, df_fundaments, kpi_type, column_name):
@@ -179,3 +182,39 @@ def process_files_to_csv():
     print()
 
     df_history.to_csv("data/processed/stocks-history.csv", index=False)
+
+
+def update_database(first_year_to_update: int):
+    csv_path = "data/processed/stocks-history.csv"
+    df = pd.read_csv(csv_path)
+    df = df[df["DATE"] >= f"{first_year_to_update}-01-01"]
+
+    qu.delete_data_from_history(first_year_to_delete=first_year_to_update)
+
+    df = df.replace([np.inf, -np.inf], np.nan)
+    df.columns = [
+        "DATE",
+        "TICKER",
+        "PRICE",
+        "CD_CVM",
+        "PRICE_PROFIT",
+        "DIVIDEND_YIELD",
+        "DIVIDEND_PAYOUT",
+        "PRICE_EQUITY",
+    ]
+    df = df[
+        [
+            "DATE",
+            "CD_CVM",
+            "TICKER",
+            "PRICE",
+            "PRICE_PROFIT",
+            "DIVIDEND_YIELD",
+            "DIVIDEND_PAYOUT",
+            "PRICE_EQUITY",
+        ]
+    ]
+
+    batch_load.load_data(table_name="stocks-history", df=df)
+
+    Path(csv_path).unlink(missing_ok=True)

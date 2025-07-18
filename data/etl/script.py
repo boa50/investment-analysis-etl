@@ -9,6 +9,9 @@ import data.etl.dividends.pdf_load as dividends_pdf_load
 import data.etl.dividends.db_load as dividends_db_load
 
 import data.etl.fundaments.script as fundaments
+
+import data.etl.history.script as history
+
 import data.etl.stocks_in_file as stocks_in_file
 
 df_files_updated = cvm_download.update_files()
@@ -55,6 +58,19 @@ if len(fundaments_files_updated) > 0:
     print(f"Fundaments updated for the years {years_to_load}")
 else:
     print("No fundaments to update")
+
+
+### History
+try:
+    years_to_load = list(set([int(f[-4:]) for f in fundaments_files_updated] + [2025]))
+    years_to_load.sort()
+    first_year_to_load = years_to_load[0]
+    history.process_files_to_csv()
+    history.update_database(first_year_to_update=first_year_to_load)
+
+    print(f"History updated from the year {first_year_to_load}")
+except Exception as e:
+    print("Error while updating the history " + str(e))
 
 
 cvm_download.update_control_table(df_files_updated=df_files_updated)

@@ -46,6 +46,16 @@ def delete_data_from_fundaments(years_to_delete: list):
     db.execute_query(sql)
 
 
+def delete_data_from_history(first_year_to_delete: int):
+    sql = f"""
+            DELETE
+            FROM {db.get_table_full_name("stocks-history")}
+            WHERE DATE >= '{first_year_to_delete}-01-01'
+        """
+
+    db.execute_query(sql)
+
+
 def get_segments():
     sql = f"""
             SELECT CD_CVM, TICKERS, SEGMENT
