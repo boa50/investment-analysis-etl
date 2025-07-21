@@ -71,11 +71,29 @@ def get_segments():
     return df_segments.reset_index(drop=True)
 
 
+def get_all_files_download_control():
+    sql = f"""
+            SELECT NAME
+            FROM {db.get_table_full_name("files-download-control")}
+        """
+
+    return db.execute_query(sql)
+
+
 def get_files_last_download_date(file_data: str):
     sql = f"""
             SELECT *
             FROM {db.get_table_full_name("files-download-control")}
             WHERE NAME LIKE '{file_data}_cia_aberta_%'
+        """
+
+    return db.execute_query(sql)
+
+
+def insert_on_control_table(filename: str, date: str):
+    sql = f"""
+            INSERT INTO {db.get_table_full_name("files-download-control")}
+            VALUES ('{filename}', '{date}')
         """
 
     return db.execute_query(sql)

@@ -208,5 +208,10 @@ def update_files(delete_zips=True):
 
 
 def update_control_table(df_files_updated: pd.DataFrame):
+    all_files = qu.get_all_files_download_control()["NAME"].to_list()
+
     for _, row in df_files_updated.iterrows():
-        qu.update_control_table(filename=row[0], date=row[1].date())
+        if row[0] in all_files:
+            qu.update_control_table(filename=row[0], date=row[1].date())
+        else:
+            qu.insert_on_control_table(filename=row[0], date=row[1].date())
