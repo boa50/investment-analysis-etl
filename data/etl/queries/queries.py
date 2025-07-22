@@ -116,3 +116,12 @@ def get_available_stocks():
         """
 
     return db.execute_query(sql)
+
+
+def get_dividends():
+    sql = f"""
+            SELECT DATE, TICKER, VALUE
+            FROM {db.get_table_full_name("vw-stocks-dividends")}
+        """
+
+    return db.execute_query(sql)

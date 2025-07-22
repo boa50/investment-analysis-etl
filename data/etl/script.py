@@ -3,6 +3,7 @@ import data.etl.downloads.cvm as cvm_download
 import data.etl.prices.data_download as prices_data_download
 import data.etl.prices.queries as prices_queries
 import data.etl.prices.db_load as prices_db_load
+import data.etl.prices.right_price as right_price
 
 import data.etl.dividends.pdf_download as dividends_pdf_download
 import data.etl.dividends.pdf_load as dividends_pdf_load
@@ -73,6 +74,16 @@ try:
     print(f"History updated from the year {first_year_to_load}")
 except Exception as e:
     print("Error while updating the history " + str(e))
+
+### Right Prices
+try:
+    right_price.calculate_right_prices()
+    prices_queries.delete_old_right_prices()
+    right_price.load_prices_into_db()
+
+    print("Right prices updated")
+except Exception as e:
+    print("Error while updating the right prices " + str(e))
 
 
 ### Ratings

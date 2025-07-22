@@ -1,12 +1,8 @@
 from google.cloud import bigquery
 import data.db as db
-import os
 
 
 db.get_db_credentials()
-
-project_id = os.environ.get("DB_PROJECT_ID")
-dataset_id = os.environ.get("DB_DATASET_ID")
 
 
 def delete_outdated_prices():
@@ -22,6 +18,18 @@ def delete_outdated_prices():
     query.result()
 
     print("Deleted outdated prices")
+
+
+def delete_old_right_prices():
+    sql = f"DELETE FROM {db.get_table_full_name('stocks-right-prices')} WHERE true"
+
+    client = bigquery.Client()
+
+    query = client.query(sql)
+
+    query.result()
+
+    print("Deleted old stocks right prices")
 
 
 def get_last_load_date():

@@ -43,7 +43,6 @@ def get_schema(table_name):
         ]
     elif table_name == "stocks-right-prices":
         return [
-            bigquery.SchemaField("CD_CVM", "STRING", mode="REQUIRED"),
             bigquery.SchemaField("TICKER", "STRING", mode="REQUIRED"),
             bigquery.SchemaField("BAZIN", "BIGDECIMAL", mode="NULLABLE"),
         ]
