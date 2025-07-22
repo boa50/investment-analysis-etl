@@ -12,6 +12,8 @@ import data.etl.fundaments.script as fundaments
 
 import data.etl.history.script as history
 
+import data.etl.ratings.script as ratings
+
 import data.etl.stocks_in_file as stocks_in_file
 
 df_files_updated = cvm_download.update_files()
@@ -71,6 +73,15 @@ try:
     print(f"History updated from the year {first_year_to_load}")
 except Exception as e:
     print("Error while updating the history " + str(e))
+
+
+### Ratings
+try:
+    ratings.load_ratings_to_db()
+
+    print("Ratings updated")
+except Exception as e:
+    print("Error while updating the ratings " + str(e))
 
 
 cvm_download.update_control_table(df_files_updated=df_files_updated)

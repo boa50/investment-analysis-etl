@@ -17,7 +17,7 @@ dataset_id = f"{os.environ.get('DB_PROJECT_ID')}.{os.environ.get('DB_DATASET_ID'
 
 def load_data(table_name: str, df: pd.DataFrame):
     # TODO(developer): Set table_id to the ID of the table to create.
-    table_id = dataset_id + "." + table_name
+    table_id = f"{dataset_id}.{table_name}"
 
     job_config = bigquery.LoadJobConfig(
         schema=get_schema(table_name=table_name),
@@ -39,6 +39,23 @@ def load_data(table_name: str, df: pd.DataFrame):
     print("Loaded {} rows.".format(destination_table.num_rows))
 
     Path(tmp_file_path).unlink(missing_ok=True)
+
+
+def load_json_data(table_name: str, data: list):
+    # TODO(developer): Set table_id to the ID of the table to create.
+    table_id = f"{dataset_id}.{table_name}"
+
+    job_config = bigquery.LoadJobConfig(
+        schema=get_schema(table_name=table_name),
+        source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
+    )
+
+    load_job = client.load_table_from_json(data, table_id, job_config=job_config)
+
+    load_job.result()  # Waits for the job to complete.
+
+    destination_table = client.get_table(table_id)  # Make an API request.
+    print("Loaded {} rows.".format(destination_table.num_rows))
 
 
 ### BASIC INFO

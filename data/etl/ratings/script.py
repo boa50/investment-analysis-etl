@@ -4,9 +4,8 @@ import data.etl.queries.queries as queries
 import data.etl.mappings as mappings
 import data.etl.ratings.utils as utils
 import data.etl.ratings.calculations as calculations
-from google.cloud import bigquery
-from data.db_creation.schemas import get_schema
-import os
+from data.db_creation import batch_load
+import data.etl.ratings.queries as ratings_queries
 
 
 def get_stock_ratings(
@@ -249,24 +248,5 @@ def get_ratings(verbose: int = 0):
 
 def load_ratings_to_db():
     ratings = get_ratings(verbose=1)
-
-    client = bigquery.Client()
-    dataset_id = f"{os.environ.get('DB_PROJECT_ID')}.{os.environ.get('DB_DATASET_ID')}"
-    table_name = "stocks-ratings"
-
-    table_id = f"{dataset_id}.{table_name}"
-
-    job_config = bigquery.LoadJobConfig(
-        schema=get_schema(table_name=table_name),
-        source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
-    )
-
-    load_job = client.load_table_from_json(ratings, table_id, job_config=job_config)
-
-    load_job.result()
-
-    destination_table = client.get_table(table_id)
-    print("Loaded {} rows.".format(destination_table.num_rows))
-
-
-load_ratings_to_db()
+    ratings_queries.delete_old_data()
+    batch_load.load_json_data(table_name="stocks-ratings", data=ratings)
